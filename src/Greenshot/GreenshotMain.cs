@@ -30,7 +30,6 @@ using System.Windows.Forms;
 using Dapplo.Ini;
 using Dapplo.Ini.Parsing;
 using Greenshot.Base.Core;
-using Greenshot.Configuration;
 using Greenshot.Editor.Configuration;
 using Greenshot.Forms;
 using Greenshot.Helpers;
@@ -139,7 +138,6 @@ public class GreenshotMain
                })
                .RegisterSection<ICoreConfiguration>(new CoreConfigurationImpl())
                .RegisterSection<IEditorConfiguration>(new EditorConfigurationImpl())
-               .RegisterSection<IWin10Configuration>(new Win10ConfigurationImpl())
                .AutoSaveInterval(TimeSpan.FromSeconds(2))
                .EmptyWhenNull()
                .LockFile()

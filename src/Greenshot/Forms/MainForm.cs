@@ -482,8 +482,7 @@ namespace Greenshot.Forms
         {
             var internalProcessors = new List<IProcessor>
             {
-                new TitleFixProcessor(),
-                new Win10OcrProcessor()
+                new TitleFixProcessor()
             };
 
             foreach (var internalProcessor in internalProcessors)

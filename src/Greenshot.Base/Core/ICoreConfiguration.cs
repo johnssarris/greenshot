@@ -328,15 +328,15 @@ namespace Greenshot.Base.Core
         [Range(1, int.MaxValue, ErrorMessage = "MaxMenuItemLength must be at least 1.")]
         int MaxMenuItemLength { get; set; }
 
-        [Description("The 'to' field for the email destination (settings for Outlook can be found under the Office section)")]
+        [Description("The 'to' field for the email destination")]
         [DefaultValue("")]
         string MailApiTo { get; set; }
 
-        [Description("The 'CC' field for the email destination (settings for Outlook can be found under the Office section)")]
+        [Description("The 'CC' field for the email destination")]
         [DefaultValue("")]
         string MailApiCC { get; set; }
 
-        [Description("The 'BCC' field for the email destination (settings for Outlook can be found under the Office section)")]
+        [Description("The 'BCC' field for the email destination")]
         [DefaultValue("")]
         string MailApiBCC { get; set; }
 
