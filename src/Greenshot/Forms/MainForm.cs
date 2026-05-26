@@ -49,7 +49,6 @@ using Greenshot.Base.Core.Enums;
 using Greenshot.Base.Core.FileFormatHandlers;
 using Greenshot.Base.Help;
 using Greenshot.Base.Interfaces;
-using Greenshot.Base.Core;
 using Greenshot.Configuration;
 using Greenshot.Controls;
 using Greenshot.Destinations;
