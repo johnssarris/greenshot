@@ -21,7 +21,6 @@
 
 using System;
 using System.Collections.Generic;
-using Greenshot.Base.Interfaces.Ocr;
 
 namespace Greenshot.Base.Interfaces
 {
