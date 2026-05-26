@@ -299,27 +299,10 @@ namespace Greenshot.Forms
                 tabcontrol.Controls.Remove(tab_expert);
             }
 
-            _toolTip.SetToolTip(label_language, Language.GetString(LangKey.settings_tooltip_language));
             _toolTip.SetToolTip(label_storagelocation, Language.GetString(LangKey.settings_tooltip_storagelocation));
             _toolTip.SetToolTip(label_screenshotname, Language.GetString(LangKey.settings_tooltip_filenamepattern));
             _toolTip.SetToolTip(label_primaryimageformat, Language.GetString(LangKey.settings_tooltip_primaryimageformat));
 
-            // Removing, otherwise we keep getting the event multiple times!
-            combobox_language.SelectedIndexChanged -= Combobox_languageSelectedIndexChanged;
-
-            // Initialize the Language ComboBox
-            combobox_language.DisplayMember = "Description";
-            combobox_language.ValueMember = "Ietf";
-            // Set datasource last to prevent problems
-            // See: https://www.codeproject.com/KB/database/scomlistcontrolbinding.aspx?fid=111644
-            combobox_language.DataSource = Language.SupportedLanguages;
-            if (Language.CurrentLanguage != null)
-            {
-                combobox_language.SelectedValue = Language.CurrentLanguage;
-            }
-
-            // Delaying the SelectedIndexChanged events until all is initiated
-            combobox_language.SelectedIndexChanged += Combobox_languageSelectedIndexChanged;
             UpdateDestinationDescriptions();
             UpdateClipboardFormatDescriptions();
         }
@@ -472,14 +455,6 @@ namespace Greenshot.Forms
         {
             colorButton_window_background.SelectedColor = coreConfiguration.DWMBackgroundColor;
 
-            if (Language.CurrentLanguage != null)
-            {
-                combobox_language.SelectedValue = Language.CurrentLanguage;
-            }
-
-            // Disable editing when the value is fixed
-            combobox_language.Enabled = !coreConfiguration.IsConstant("Language");
-
             textbox_storagelocation.Text = FilenameHelper.FillVariables(coreConfiguration.OutputFilePath, false);
             // Disable editing when the value is fixed
             textbox_storagelocation.Enabled = !coreConfiguration.IsConstant("OutputFilePath");
@@ -533,15 +508,6 @@ namespace Greenshot.Forms
 
         private void SaveSettings()
         {
-            if (combobox_language.SelectedItem != null)
-            {
-                string newLang = combobox_language.SelectedValue.ToString();
-                if (!string.IsNullOrEmpty(newLang))
-                {
-                    coreConfiguration.Language = combobox_language.SelectedValue.ToString();
-                }
-            }
-
             // retrieve the set clipboard formats
             var clipboardFormats = new List<ClipboardFormat>();
             foreach (int index in listview_clipboardformats.CheckedIndices)
@@ -744,27 +710,6 @@ namespace Greenshot.Forms
             PluginHelper.Instance.ConfigureSelectedItem(listview_plugins);
         }
 
-        private void Combobox_languageSelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Get the combobox values BEFORE changing the language
-            //EmailFormat selectedEmailFormat = GetSelected<EmailFormat>(combobox_emailformat);
-            WindowCaptureMode selectedWindowCaptureMode = GetSelected<WindowCaptureMode>(combobox_window_capture_mode);
-            if (combobox_language.SelectedItem != null)
-            {
-                Log.Debug("Setting language to: " + (string) combobox_language.SelectedValue);
-                Language.CurrentLanguage = (string) combobox_language.SelectedValue;
-            }
-
-            // Reflect language changes to the settings form
-            UpdateUi();
-
-            // Reflect Language changes form
-            ApplyLanguage();
-
-            // Update the email & windows capture mode
-            //SetEmailFormat(selectedEmailFormat);
-            SetWindowCaptureMode(selectedWindowCaptureMode);
-        }
 
         private void Combobox_window_capture_modeSelectedIndexChanged(object sender, EventArgs e)
         {
