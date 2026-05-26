@@ -54,59 +54,33 @@ internal static class HotkeyHelper
 
         var uiContext = SimpleServiceProvider.Current.GetInstance<SynchronizationContext>();
 
-        if (!RegisterWrapper(failedKeys, "CaptureRegion", "RegionHotkey", () => {
+        success &= RegisterWrapper(failedKeys, "CaptureRegion", "RegionHotkey", () => {
             uiContext?.Post(_ => CaptureHelper.CaptureRegion(true), null);
-        }, ignoreFailedRegistration))
-        {
-            success = false;
-        }
+        }, ignoreFailedRegistration);
 
-        if (!RegisterWrapper(failedKeys, "CaptureWindow", "WindowHotkey", () =>
+        success &= RegisterWrapper(failedKeys, "CaptureWindow", "WindowHotkey", () =>
         {
             if (config.CaptureWindowsInteractive)
-            {
                 uiContext?.Post(_ => CaptureHelper.CaptureWindowInteractive(true), null);
-            }
             else
-            {
                 uiContext?.Post(_ => CaptureHelper.CaptureWindow(true), null);
-            }
-        }, ignoreFailedRegistration))
-        {
-            success = false;
-        }
+        }, ignoreFailedRegistration);
 
-        if (!RegisterWrapper(failedKeys, "CaptureFullScreen", "FullscreenHotkey", () => {
+        success &= RegisterWrapper(failedKeys, "CaptureFullScreen", "FullscreenHotkey", () => {
             uiContext?.Post(_ => CaptureHelper.CaptureFullscreen(true, config.ScreenCaptureMode), null);
-        }, ignoreFailedRegistration))
-        {
-            success = false;
-        }
+        }, ignoreFailedRegistration);
 
-        if (!RegisterWrapper(failedKeys, "CaptureLastRegion", "LastregionHotkey", () => {
+        success &= RegisterWrapper(failedKeys, "CaptureLastRegion", "LastregionHotkey", () => {
             uiContext?.Post(_ => CaptureHelper.CaptureLastRegion(true), null);
-        }, ignoreFailedRegistration))
-        {
-            success = false;
-        }
+        }, ignoreFailedRegistration);
 
-        if (!RegisterWrapper(failedKeys, "CaptureClipboard", "ClipboardHotkey", () => {
+        success &= RegisterWrapper(failedKeys, "CaptureClipboard", "ClipboardHotkey", () => {
             uiContext?.Post(_ => CaptureHelper.CaptureClipboard(DestinationHelper.GetDestination(ClipboardDestination.DESIGNATION)), null);
-        }, true))
-        {
-            success = false;
-        }
+        }, true);
 
-        if (!success)
+        if (!success && !ignoreFailedRegistration)
         {
-            if (!ignoreFailedRegistration)
-            {
-                success = HandleFailedHotkeyRegistration(failedKeys.ToString());
-            }
-            else
-            {
-                // if failures have been ignored, the config has probably been updated
-            }
+            success = HandleFailedHotkeyRegistration(failedKeys.ToString());
         }
 
         return success || ignoreFailedRegistration;

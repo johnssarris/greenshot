@@ -34,33 +34,25 @@ namespace Greenshot.Base.Core
         /// <inheritdoc/>
         public TService GetInstance<TService>(bool isOptional = false)
         {
-            try
+            var instances = GetAllInstances<TService>();
+
+            if (instances.Count > 1)
             {
-                var instances = GetAllInstances<TService>();
-
-                if (instances.Count > 1)
-                {
-                    throw new InvalidOperationException(
-                        $"Found {instances.Count} instances of {typeof(TService).FullName}, but expected only one."
-                    );
-                }
-
-                var instance = instances.FirstOrDefault();
-
-                if (!isOptional && instance is null)
-                {
-                    throw new InvalidOperationException(
-                        $"No instance of {typeof(TService).FullName} found, but it is required."
-                    );
-                }
-
-                return instance;
+                throw new InvalidOperationException(
+                    $"Found {instances.Count} instances of {typeof(TService).FullName}, but expected only one."
+                );
             }
-            catch (Exception ex)
+
+            var instance = instances.FirstOrDefault();
+
+            if (!isOptional && instance is null)
             {
-                Log.Error($"GetInstance failed for {typeof(TService)}", ex);
-                throw;
+                throw new InvalidOperationException(
+                    $"No instance of {typeof(TService).FullName} found, but it is required."
+                );
             }
+
+            return instance;
         }
 
         /// <inheritdoc/>

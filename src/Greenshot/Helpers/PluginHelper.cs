@@ -258,53 +258,35 @@ namespace Greenshot.Helpers
 
             // ── Phase 1: Register configuration sections (no file I/O) ───────────
             var activeIniConfig = IniConfigRegistry.Get();
-            foreach (var plugin in plugins)
-            {
-                try
-                {
-                    plugin.RegisterConfiguration(activeIniConfig);
-                }
-                catch (Exception e)
-                {
-                    Log.ErrorFormat("Error during RegisterConfiguration for plugin {0}", plugin.Name);
-                    Log.Error(e);
-                }
-            }
+            InvokePluginPhase(plugins, "RegisterConfiguration", p => p.RegisterConfiguration(activeIniConfig));
 
             // ── Single file read (all sections populated at once) ─────────────────
             IniConfigRegistry.Get().Load();
 
             // ── Phase 2: Register services ────────────────────────────────────────
-            foreach (var plugin in plugins)
-            {
-                try
-                {
-                    plugin.RegisterServices(SimpleServiceProvider.Current);
-                }
-                catch (Exception e)
-                {
-                    Log.ErrorFormat("Error during RegisterServices for plugin {0}", plugin.Name);
-                    Log.Error(e);
-                }
-            }
+            InvokePluginPhase(plugins, "RegisterServices", p => p.RegisterServices(SimpleServiceProvider.Current));
 
             // ── Phase 3: Start ────────────────────────────────────────────────────
+            InvokePluginPhase(plugins, "Start", plugin =>
+            {
+                if (plugin.Start())
+                    SimpleServiceProvider.Current.AddService(plugin);
+                else
+                    Log.InfoFormat("Plugin {0} did not start.", plugin.Name);
+            });
+        }
+
+        private static void InvokePluginPhase(IEnumerable<IGreenshotPlugin> plugins, string phaseName, Action<IGreenshotPlugin> action)
+        {
             foreach (var plugin in plugins)
             {
                 try
                 {
-                    if (plugin.Start())
-                    {
-                        SimpleServiceProvider.Current.AddService(plugin);
-                    }
-                    else
-                    {
-                        Log.InfoFormat("Plugin {0} did not start.", plugin.Name);
-                    }
+                    action(plugin);
                 }
                 catch (Exception e)
                 {
-                    Log.ErrorFormat("Error during Start for plugin {0}", plugin.Name);
+                    Log.ErrorFormat("Error during {0} for plugin {1}", phaseName, plugin.Name);
                     Log.Error(e);
                 }
             }

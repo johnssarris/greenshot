@@ -294,7 +294,7 @@ namespace Greenshot.Helpers
             }
 
             // Add destinations if no-one passed a handler
-            if (_capture.CaptureDetails.CaptureDestinations == null || _capture.CaptureDetails.CaptureDestinations.Count == 0)
+            if (!(_capture.CaptureDetails.CaptureDestinations?.Count > 0))
             {
                 AddConfiguredDestination();
             }
@@ -303,10 +303,6 @@ namespace Greenshot.Helpers
             if (CoreConfig.CaptureDelay > 0)
             {
                 Thread.Sleep(CoreConfig.CaptureDelay);
-            }
-            else
-            {
-                CoreConfig.CaptureDelay = 0;
             }
 
             // Capture Mouse cursor if we are not loading from file or clipboard, only show when needed

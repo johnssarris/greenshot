@@ -141,6 +141,14 @@ namespace Greenshot.Base.Core
             return Description;
         }
 
+        private static void DisposeMenuAsync(ContextMenuStrip menu)
+        {
+            menu.BeginInvoke(new Action(() =>
+            {
+                if (!menu.IsDisposed) menu.Dispose();
+            }));
+        }
+
         /// <summary>
         /// Helper method to add events which set the tag, this way we can see why there might be a close.
         /// </summary>
@@ -151,12 +159,12 @@ namespace Greenshot.Base.Core
         {
             if (menuItem != null && menu != null)
             {
-                menuItem.MouseDown += delegate
+                menuItem.MouseDown += (_, _) =>
                 {
                     Log.DebugFormat("Setting tag to '{0}'", tagValue);
                     menu.Tag = tagValue;
                 };
-                menuItem.MouseUp += delegate
+                menuItem.MouseUp += (_, _) =>
                 {
                     Log.Debug("Deleting tag");
                     menu.Tag = null;
@@ -198,7 +206,7 @@ namespace Greenshot.Base.Core
                 menu.ResumeLayout();
             };
 
-            menu.Closing += delegate(object source, ToolStripDropDownClosingEventArgs eventArgs)
+            menu.Closing += (_, eventArgs) =>
             {
                 Log.DebugFormat("Close reason: {0}", eventArgs.CloseReason);
                 switch (eventArgs.CloseReason)
@@ -230,21 +238,15 @@ namespace Greenshot.Base.Core
                             surface.Dispose();
                             surface = null;
                         }
-                        // We might already be in the disposing process, so queue the disposal to avoid re-entrancy
-                        menu.BeginInvoke(new Action(() =>
-                        {
-                            if (!menu.IsDisposed)
-                            {
-                                menu.Dispose();
-                            }
-                        }));
+                        // Queue disposal to avoid re-entrancy
+                        DisposeMenuAsync(menu);
                         break;
                     default:
                         eventArgs.Cancel = true;
                         break;
                 }
             };
-            menu.MouseEnter += delegate
+            menu.MouseEnter += (_, _) =>
             {
                 // in case the menu has been unfocused, focus again so that dropdown menus will still open on mouseenter
                 if (!menu.ContainsFocus)
@@ -256,7 +258,7 @@ namespace Greenshot.Base.Core
             {
                 // Fix foreach loop variable for the delegate
                 ToolStripMenuItem item = destination.GetMenuItem(addDynamics, menu,
-                    delegate(object sender, EventArgs e)
+                    (sender, _) =>
                     {
                         ToolStripMenuItem toolStripMenuItem = sender as ToolStripMenuItem;
                         IDestination clickedDestination = (IDestination) toolStripMenuItem?.Tag;
@@ -279,13 +281,7 @@ namespace Greenshot.Base.Core
                         {
                             Log.InfoFormat("Export to {0} success, closing menu", exportInformation.DestinationDescription);
                             menu.Close();
-                            menu.BeginInvoke(new Action(() =>
-                            {
-                                if (!menu.IsDisposed)
-                                {
-                                    menu.Dispose();
-                                }
-                            }));
+                            DisposeMenuAsync(menu);
                             surface.Dispose();
                             surface = null;
                         }
@@ -313,17 +309,11 @@ namespace Greenshot.Base.Core
             {
                 Image = GreenshotResources.GetImage("Close.Image")
             };
-            closeItem.Click += delegate
+            closeItem.Click += (_, _) =>
             {
                 // This menu entry is the close itself, we can dispose the surface
                 menu.Close();
-                menu.BeginInvoke(new Action(() =>
-                {
-                    if (!menu.IsDisposed)
-                    {
-                        menu.Dispose();
-                    }
-                }));
+                DisposeMenuAsync(menu);
                 surface.Dispose();
                 surface = null;
             };
@@ -381,7 +371,7 @@ namespace Greenshot.Base.Core
 
             if (IsDynamic && addDynamics)
             {
-                basisMenuItem.DropDownOpening += delegate
+                basisMenuItem.DropDownOpening += (_, _) =>
                 {
                     if (basisMenuItem.DropDownItems.Count == 0)
                     {

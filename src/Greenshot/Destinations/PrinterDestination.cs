@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Linq;
 using System.Windows.Forms;
 using Greenshot.Base;
 using Greenshot.Base.Core;
@@ -77,29 +78,12 @@ namespace Greenshot.Destinations
         /// <returns>IEnumerable of IDestination</returns>
         public override IEnumerable<IDestination> DynamicDestinations()
         {
-            PrinterSettings settings = new PrinterSettings();
-            string defaultPrinter = settings.PrinterName;
-            List<string> printers = new List<string>();
-
-            foreach (string printer in PrinterSettings.InstalledPrinters)
-            {
-                printers.Add(printer);
-            }
-
-            printers.Sort(delegate(string p1, string p2)
-            {
-                if (defaultPrinter.Equals(p1))
-                {
-                    return -1;
-                }
-
-                if (defaultPrinter.Equals(p2))
-                {
-                    return 1;
-                }
-
-                return string.Compare(p1, p2, StringComparison.Ordinal);
-            });
+            string defaultPrinter = new PrinterSettings().PrinterName;
+            var printers = PrinterSettings.InstalledPrinters.Cast<string>().ToList();
+            printers.Sort((p1, p2) =>
+                defaultPrinter.Equals(p1) ? -1 :
+                defaultPrinter.Equals(p2) ? 1 :
+                string.Compare(p1, p2, StringComparison.Ordinal));
             foreach (string printer in printers)
             {
                 yield return new PrinterDestination(printer);
@@ -120,28 +104,14 @@ namespace Greenshot.Destinations
         public override ExportInformation ExportCapture(bool manuallyInitiated, ISurface surface, ICaptureDetails captureDetails)
         {
             ExportInformation exportInformation = new ExportInformation(Designation, Description);
-            PrinterSettings printerSettings;
-            if (!string.IsNullOrEmpty(_printerName))
-            {
-                using PrintHelper printHelper = new PrintHelper(surface, captureDetails);
-                printerSettings = printHelper.PrintTo(_printerName);
-            }
-            else if (!manuallyInitiated)
-            {
-                PrinterSettings settings = new PrinterSettings();
-                using PrintHelper printHelper = new PrintHelper(surface, captureDetails);
-                printerSettings = printHelper.PrintTo(settings.PrinterName);
-            }
-            else
-            {
-                using PrintHelper printHelper = new PrintHelper(surface, captureDetails);
-                printerSettings = printHelper.PrintWithDialog();
-            }
+            using var printHelper = new PrintHelper(surface, captureDetails);
+            PrinterSettings printerSettings = !string.IsNullOrEmpty(_printerName)
+                ? printHelper.PrintTo(_printerName)
+                : !manuallyInitiated
+                    ? printHelper.PrintTo(new PrinterSettings().PrinterName)
+                    : printHelper.PrintWithDialog();
 
-            if (printerSettings != null)
-            {
-                exportInformation.ExportMade = true;
-            }
+            exportInformation.ExportMade = printerSettings != null;
 
             ProcessExport(exportInformation, surface);
             return exportInformation;
