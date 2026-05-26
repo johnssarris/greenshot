@@ -27,8 +27,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Security.Permissions;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Dapplo.Windows.Common.Extensions;
 using Dapplo.Windows.Common.Structs;
@@ -38,7 +36,6 @@ using Greenshot.Base.Controls;
 using Greenshot.Base.Core;
 using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
-using Greenshot.Base.Interfaces.Ocr;
 using Dapplo.Windows.Icons;
 
 namespace Greenshot.Forms
@@ -136,12 +133,6 @@ namespace Greenshot.Forms
         private void ClosedHandler(object sender, EventArgs e)
         {
             _currentForm = null;
-            // Change the final mode
-            if (_captureMode == CaptureMode.Text)
-            {
-                _capture.CaptureDetails.CaptureMode = CaptureMode.Text;
-            }
-
             Log.Debug("Remove CaptureForm from currentForm");
         }
 
@@ -342,11 +333,6 @@ namespace Greenshot.Forms
                             _captureRect = NativeRect.Empty;
                             Invalidate();
                             break;
-                        case CaptureMode.Text:
-                            // Set the region capture mode
-                            _captureMode = CaptureMode.Region;
-                            Invalidate();
-                            break;
                         case CaptureMode.Window:
                             // Set the region capture mode
                             _captureMode = CaptureMode.Region;
@@ -381,28 +367,6 @@ namespace Greenshot.Forms
                 case Keys.F:
                     ToFront = !ToFront;
                     TopMost = !TopMost;
-                    break;
-                case Keys.T:
-                    _captureMode = CaptureMode.Text;
-                    if (_capture.CaptureDetails.OcrInformation is null)
-                    {
-                        var ocrProvider = SimpleServiceProvider.Current.GetInstance<IOcrProvider>();
-                        if (ocrProvider != null)
-                        {
-                            var uiTaskScheduler = SimpleServiceProvider.Current.GetInstance<TaskScheduler>();
-
-                            Task.Factory.StartNew(async () =>
-                            {
-                                _capture.CaptureDetails.OcrInformation = await ocrProvider.DoOcrAsync(_capture.Image);
-                                Invalidate();
-                            }, CancellationToken.None, TaskCreationOptions.None, uiTaskScheduler);
-                        }
-                    }
-                    else
-                    {
-                        Invalidate();
-                    }
-
                     break;
             }
         }
@@ -443,7 +407,7 @@ namespace Greenshot.Forms
             else if (_captureRect.Height > 0 && _captureRect.Width > 0)
             {
                 // correct the GUI width to real width if Region mode
-                if (_captureMode is CaptureMode.Region or CaptureMode.Text)
+                if (_captureMode == CaptureMode.Region)
                 {
                     // Correct the rectangle size, by making it 1 pixel bigger
                     // We cannot use inflate, this would make the rect bigger to all sizes.
@@ -453,46 +417,10 @@ namespace Greenshot.Forms
                 // Go and process the capture
                 DialogResult = DialogResult.OK;
             }
-            else if (_captureMode == CaptureMode.Text && IsWordUnderCursor(_mouseMovePos))
-            {
-                // Handle a click on a single word
-                _captureRect = new NativeRect(_mouseMovePos, new NativeSize(1, 1));
-                // Go and process the capture
-                DialogResult = DialogResult.OK;
-            }
             else
             {
                 Invalidate();
             }
-        }
-
-        /// <summary>
-        /// Check if there is a word under the specified location
-        /// </summary>
-        /// <param name="location">NativePoint</param>
-        /// <returns>bool true if there is a word</returns>
-        private bool IsWordUnderCursor(NativePoint location)
-        {
-            if (_captureMode != CaptureMode.Text || _capture.CaptureDetails.OcrInformation == null) return false;
-
-            var ocrInfo = _capture.CaptureDetails.OcrInformation;
-
-            foreach (var line in ocrInfo.Lines)
-            {
-                var lineBounds = line.CalculatedBounds;
-                if (lineBounds.IsEmpty) continue;
-                // Highlight the text which is selected
-                if (!lineBounds.Contains(location)) continue;
-                foreach (var word in line.Words)
-                {
-                    if (word.Bounds.Contains(location))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
         }
 
         /// <summary>
@@ -593,7 +521,7 @@ namespace Greenshot.Forms
                 verticalMove = true;
             }
 
-            if ((_captureMode == CaptureMode.Region || _captureMode == CaptureMode.Text) && _mouseDown)
+            if (_captureMode == CaptureMode.Region && _mouseDown)
             {
                 _captureRect = new NativeRect(_cursorPos.X, _cursorPos.Y, _mX - _cursorPos.X, _mY - _cursorPos.Y).Normalize();
             }
@@ -732,64 +660,6 @@ namespace Greenshot.Forms
                 invalidateRectangle = IsAnimating(_zoomAnimator) ? _zoomAnimator.Next() : _zoomAnimator.Current;
                 invalidateRectangle = invalidateRectangle.Offset(_cursorPos);
                 Invalidate(invalidateRectangle);
-            }
-
-            // OCR
-            if (_captureMode == CaptureMode.Text && _capture.CaptureDetails.OcrInformation != null)
-            {
-                var ocrInfo = _capture.CaptureDetails.OcrInformation;
-
-                invalidateRectangle = NativeRect.Empty;
-                foreach (var line in ocrInfo.Lines)
-                {
-                    var lineBounds = line.CalculatedBounds;
-                    if (lineBounds.IsEmpty)
-                    {
-                        continue;
-                    }
-                    if (_mouseDown)
-                    {
-                        // Highlight the text which is selected
-                        if (!lineBounds.IntersectsWith(_captureRect)) continue;
-                        foreach (var word in line.Words)
-                        {
-                            if (!word.Bounds.IntersectsWith(_captureRect))
-                            {
-                                continue;
-                            }
-                            if (invalidateRectangle.IsEmpty)
-                            {
-                                invalidateRectangle = word.Bounds;
-                            }
-                            else
-                            {
-                                invalidateRectangle = invalidateRectangle.Union(word.Bounds);
-                            }
-                        }
-                    }
-                    else if (lineBounds.Contains(_mouseMovePos))
-                    {
-                        foreach (var word in line.Words)
-                        {
-                            if (!word.Bounds.Contains(_mouseMovePos)) continue;
-                            if (invalidateRectangle.IsEmpty)
-                            {
-                                invalidateRectangle = word.Bounds;
-                            }
-                            else
-                            {
-                                invalidateRectangle = invalidateRectangle.Union(word.Bounds);
-                            }
-
-                            break;
-                        }
-                    }
-                }
-
-                if (!invalidateRectangle.IsEmpty)
-                {
-                    Invalidate(invalidateRectangle);
-                }
             }
 
             // Force update "now"
@@ -981,49 +851,6 @@ namespace Greenshot.Forms
             //graphics.BitBlt((Bitmap)buffer, Point.Empty);
             graphics.DrawImageUnscaled(_capture.Image, Point.Empty);
 
-            var ocrInfo = _capture.CaptureDetails.OcrInformation;
-            if (ocrInfo != null && _captureMode == CaptureMode.Text)
-            {
-                using var pen = new Pen(Color.Red);
-                var highlightColor = Color.FromArgb(128, Color.Yellow);
-                using var highlightTextBrush = new SolidBrush(highlightColor);
-                foreach (var line in ocrInfo.Lines)
-                {
-                    var lineBounds = line.CalculatedBounds;
-                    if (lineBounds.IsEmpty)
-                    {
-                        continue;
-                    }
-                    graphics.DrawRectangle(pen, line.CalculatedBounds);
-                    if (_mouseDown)
-                    {
-                        // Highlight the text which is selected
-                        if (lineBounds.IntersectsWith(_captureRect))
-                        {
-                            foreach (var word in line.Words)
-                            {
-                                if (word.Bounds.IntersectsWith(_captureRect))
-                                {
-                                    graphics.FillRectangle(highlightTextBrush, word.Bounds);
-                                }
-                            }
-                        }
-                    }
-                    else if (lineBounds.Contains(_mouseMovePos))
-                    {
-                        foreach (var word in line.Words)
-                        {
-                            if (!word.Bounds.Contains(_mouseMovePos))
-                            {
-                                continue;
-                            }
-                            graphics.FillRectangle(highlightTextBrush, word.Bounds);
-                            break;
-                        }
-                    }
-                }
-            }
-
             // Only draw Cursor if it's (partly) visible
             if (_capture.Cursor != null && _capture.CursorVisible && clipRectangle.IntersectsWith(new NativeRect(_capture.CursorLocation, _capture.Cursor.Size)))
             {
@@ -1112,7 +939,7 @@ namespace Greenshot.Forms
                 using Font sizeFont = new Font(FontFamily.GenericSansSerif, 12);
                 // When capturing a Region we need to add 1 to the height/width for correction
                 string sizeText;
-                if (_captureMode == CaptureMode.Region || _captureMode == CaptureMode.Text)
+                if (_captureMode == CaptureMode.Region)
                 {
                     // correct the GUI width to real width for the shown size
                     sizeText = _captureRect.Width + 1 + " x " + (_captureRect.Height + 1);

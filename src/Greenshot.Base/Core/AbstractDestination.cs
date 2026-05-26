@@ -225,7 +225,7 @@ namespace Greenshot.Base.Core
                         break;
                     case ToolStripDropDownCloseReason.Keyboard:
                         // Menu closed via keyboard (e.g., ESC key)
-                        if (!captureDetails.HasDestination("Editor") && surface != null)
+                        if (surface != null)
                         {
                             surface.Dispose();
                             surface = null;
@@ -278,7 +278,6 @@ namespace Greenshot.Base.Core
                         if (exportInformation != null && exportInformation.ExportMade)
                         {
                             Log.InfoFormat("Export to {0} success, closing menu", exportInformation.DestinationDescription);
-                            // close menu if the destination wasn't the editor
                             menu.Close();
                             menu.BeginInvoke(new Action(() =>
                             {
@@ -287,12 +286,8 @@ namespace Greenshot.Base.Core
                                     menu.Dispose();
                                 }
                             }));
-                            // Cleanup surface, only if there is no editor in the destinations and we didn't export to the editor
-                            if (!captureDetails.HasDestination("Editor") && !"Editor".Equals(clickedDestination.Designation))
-                            {
-                                surface.Dispose();
-                                surface = null;
-                            }
+                            surface.Dispose();
+                            surface = null;
                         }
                         else
                         {
@@ -329,11 +324,8 @@ namespace Greenshot.Base.Core
                         menu.Dispose();
                     }
                 }));
-                if (!captureDetails.HasDestination("Editor"))
-                {
-                    surface.Dispose();
-                    surface = null;
-                }
+                surface.Dispose();
+                surface = null;
             };
             menu.Items.Add(closeItem);
 

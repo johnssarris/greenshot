@@ -72,14 +72,6 @@ namespace Greenshot.Base.Core
         /// <param name="value">Update check interval in days</param>
         partial void OnUpdateCheckIntervalSet(ref int value) => value = Clamp(value, 0, 365);
 
-        /// <summary>
-        /// Returns true if the supplied experimental feature is enabled
-        /// </summary>
-        public bool IsExperimentalFeatureEnabled(string experimentalFeature)
-        {
-            return ExperimentalFeatures != null && ExperimentalFeatures.Contains(experimentalFeature);
-        }
-
         private string CreateOutputFilePath()
         {
             if (GreenshotEnvironment.IsPortable)
@@ -160,7 +152,7 @@ namespace Greenshot.Base.Core
             // Make sure there is an output!
             if (OutputDestinations.Count == 0)
             {
-                OutputDestinations.Add("Editor");
+                OutputDestinations.Add("Picker");
                 // Re-assign to trigger SetRawValue dirty tracking for the in-place Add
                 OutputDestinations = OutputDestinations;
             }

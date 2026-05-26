@@ -119,11 +119,6 @@ namespace Greenshot.Base.Core
         }
 
         /// <summary>
-        /// The information which OCR brings
-        /// </summary>
-        public OcrInformation OcrInformation { get; set; }
-
-        /// <summary>
         /// Set if the cursor is visible
         /// </summary>
         public bool CursorVisible { get; set; }
@@ -233,10 +228,6 @@ namespace Greenshot.Base.Core
             // Move all the elements
             // TODO: Enable when the elements are usable again.
             // MoveElements(-cropRectangle.Location.X, -cropRectangle.Location.Y);
-
-            // Offset the OCR information
-            // TODO: Remove invisible lines/words?
-            CaptureDetails.OcrInformation?.Offset(-cropRectangle.Location.X, -cropRectangle.Location.Y);
 
             return true;
         }

@@ -1225,8 +1225,6 @@ namespace Greenshot.Forms
                 case ClickActions.CAPTURE_WINDOW:
                     CaptureHelper.CaptureWindowInteractive(false);
                     break;
-                case ClickActions.OPEN_EMPTY_EDITOR:
-                    break;
             }
         }
 

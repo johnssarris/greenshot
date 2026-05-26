@@ -9,7 +9,6 @@ dotnet build src/Greenshot.sln
 ```
 
 - **Target**: .NET Framework 4.8 (`net480`), Windows only
-- A custom MSBuild task (`EmojiDataTask` from `Greenshot.BuildTasks`) runs before build to generate `emojis.xml`
 - Post-build copies `log4net-debug.xml` or `log4net-release.xml` as `log4net.xml` depending on configuration
 - Output lands in `src/Greenshot/bin/<Configuration>/net480/`
 
@@ -19,8 +18,6 @@ dotnet build src/Greenshot.sln
 |---|---|
 | `Greenshot` | WinExe entry point — capture hotkeys, tray icon, UI forms, built-in destinations |
 | `Greenshot.Base` | Core library — interfaces, DI container, image helpers, configuration |
-| `Greenshot.Editor` | Annotation editor — drawing tools, filters, adorners, editor forms |
-| `Greenshot.BuildTasks` | MSBuild task for emoji data generation (build-time only) |
 
 ## Architecture
 
@@ -69,7 +66,6 @@ var foo = SimpleServiceProvider.Current.GetInstance<IFoo>();
 | `IGreenshotPlugin` | Full plugin lifecycle | `src/Greenshot.Base/Interfaces/` |
 | `IProcessor` | Post-capture processing pipeline | `src/Greenshot.Base/Interfaces/` |
 | `IFileFormatHandler` | Add/override image file format I/O | `src/Greenshot.Base/Interfaces/` |
-| `IOcrProvider` | OCR integration (currently unused) | `src/Greenshot.Base/Interfaces/Ocr/` |
 
 ## No Tests
 

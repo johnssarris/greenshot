@@ -34,9 +34,7 @@ namespace Greenshot.Base.Interfaces
         LastRegion,
         Clipboard,
         File,
-        Import,
-
-        Text
+        Import
         // Video
     };
 }
