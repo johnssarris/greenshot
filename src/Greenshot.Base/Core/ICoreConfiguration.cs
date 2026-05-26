@@ -296,9 +296,6 @@ namespace Greenshot.Base.Core
         [Description("The replacements for the matchers.")]
         Dictionary<string, string> TitleFixReplacer { get; set; }
 
-        [Description("A list of experimental features, this allows us to test certain features before releasing them.")]
-        List<string> ExperimentalFeatures { get; set; }
-
         [Description("Enable a special DIB clipboard reader")]
         [DefaultValue(true)]
         bool EnableSpecialDIBClipboardReader { get; set; }
@@ -339,14 +336,6 @@ namespace Greenshot.Base.Core
         [Description("The 'BCC' field for the email destination")]
         [DefaultValue("")]
         string MailApiBCC { get; set; }
-
-        [Description("Optional command to execute on a temporary PNG file, the command should overwrite the file and Greenshot will read it back. Note: this command is also executed when uploading PNG's!")]
-        [DefaultValue("")]
-        string OptimizePNGCommand { get; set; }
-
-        [Description("Arguments for the optional command to execute on a PNG, {0} is replaced by the temp-filename from Greenshot. Note: Temp-file is deleted afterwards by Greenshot.")]
-        [DefaultValue("\"{0}\"")]
-        string OptimizePNGCommandArguments { get; set; }
 
         [Description("Version of Greenshot which created this .ini")]
         string LastSaveWithVersion { get; }

@@ -25,7 +25,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -618,49 +617,6 @@ namespace Greenshot.Helpers
             // Flag to see if the image was "exported" so the FileEditor doesn't
             // ask to save the file as long as nothing is done.
             bool outputMade = false;
-
-            if (_capture.CaptureDetails.CaptureMode == CaptureMode.Text)
-            {
-                var selectionRectangle = new NativeRect(NativePoint.Empty, _capture.Image.Size);
-                var ocrInfo = _capture.CaptureDetails.OcrInformation;
-                if (ocrInfo != null)
-                {
-                    var textResult = new StringBuilder();
-                    foreach (var line in ocrInfo.Lines)
-                    {
-                        var lineBounds = line.CalculatedBounds;
-                        if (lineBounds.IsEmpty) continue;
-                        // Highlight the text which is selected
-                        if (!lineBounds.IntersectsWith(selectionRectangle)) continue;
-
-                        for (var index = 0; index < line.Words.Length; index++)
-                        {
-                            var word = line.Words[index];
-                            if (!word.Bounds.IntersectsWith(selectionRectangle)) continue;
-                            textResult.Append(word.Text);
-
-                            if (index + 1 < line.Words.Length && word.Text.Length > 1)
-                            {
-                                textResult.Append(' ');
-                            }
-                        }
-
-                        textResult.AppendLine();
-                    }
-
-                    if (textResult.Length > 0)
-                    {
-                        Clipboard.SetText(textResult.ToString());
-                    }
-                }
-
-                // Disable capturing
-                _captureMode = CaptureMode.None;
-                // Dispose the capture, we don't need it anymore (the surface copied all information and we got the title (if any)).
-                _capture.Dispose();
-                _capture = null;
-                return;
-            }
 
             // Make sure the user sees that the capture is made
             if (_capture.CaptureDetails.CaptureMode == CaptureMode.File || _capture.CaptureDetails.CaptureMode == CaptureMode.Clipboard)

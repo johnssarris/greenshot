@@ -48,9 +48,6 @@ namespace Greenshot.Base.Core
         public float DpiY { get; set; }
 
         /// <inheritdoc />
-        public OcrInformation OcrInformation { get; set; }
-
-        /// <inheritdoc />
         public Dictionary<string, string> MetaData { get; } = new Dictionary<string, string>();
 
         /// <inheritdoc />
