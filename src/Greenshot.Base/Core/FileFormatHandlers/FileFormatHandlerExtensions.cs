@@ -19,12 +19,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using Greenshot.Base.Interfaces;
-using Greenshot.Base.Interfaces.Drawing;
 using Greenshot.Base.Interfaces.Plugin;
 
 namespace Greenshot.Base.Core.FileFormatHandlers
@@ -107,31 +105,6 @@ namespace Greenshot.Base.Core.FileFormatHandlers
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Try to load a drawable container from the stream
-        /// </summary>
-        /// <param name="fileFormatHandlers">IEnumerable{IFileFormatHandler}</param>
-        /// <param name="stream">Stream</param>
-        /// <param name="extension">string</param>
-        /// <param name="parentSurface">ISurface</param>
-        /// <returns>IEnumerable{IDrawableContainer}</returns>
-        public static IEnumerable<IDrawableContainer> LoadDrawablesFromStream(this IEnumerable<IFileFormatHandler> fileFormatHandlers, Stream stream, string extension, ISurface parentSurface = null)
-        {
-            extension = NormalizeExtension(extension);
-
-            var loadfileFormatHandler = fileFormatHandlers
-                .Where(ffh => ffh.Supports(FileFormatHandlerActions.LoadDrawableFromStream, extension))
-                .OrderBy(ffh => ffh.PriorityFor(FileFormatHandlerActions.LoadDrawableFromStream, extension))
-                .FirstOrDefault();
-
-            if (loadfileFormatHandler != null)
-            {
-                return loadfileFormatHandler.LoadDrawablesFromStream(stream, extension, parentSurface);
-            }
-
-            return Enumerable.Empty<IDrawableContainer>();
         }
 
         /// <summary>

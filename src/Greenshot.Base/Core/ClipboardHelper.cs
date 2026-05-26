@@ -39,7 +39,6 @@ using Greenshot.Base.Core.Enums;
 using Greenshot.Base.Core.FileFormatHandlers;
 using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
-using Greenshot.Base.Interfaces.Drawing;
 using Greenshot.Base.Interfaces.Plugin;
 using log4net;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
@@ -304,7 +303,7 @@ EndSelection:<<<<<<<4
                 return true;
             }
             var fileFormatHandlers = SimpleServiceProvider.Current.GetAllInstances<IFileFormatHandler>();
-            var supportedExtensions = fileFormatHandlers.ExtensionsFor(FileFormatHandlerActions.LoadDrawableFromStream).ToList();
+            var supportedExtensions = fileFormatHandlers.ExtensionsFor(FileFormatHandlerActions.LoadFromStream).ToList();
             foreach (var (stream, filename) in IterateClipboardContent(dataObject))
             {
                 try
@@ -533,7 +532,7 @@ EndSelection:<<<<<<<4
             }
 
             var fileFormatHandlers = SimpleServiceProvider.Current.GetAllInstances<IFileFormatHandler>();
-            var supportedExtensions = fileFormatHandlers.ExtensionsFor(FileFormatHandlerActions.LoadDrawableFromStream).ToList();
+            var supportedExtensions = fileFormatHandlers.ExtensionsFor(FileFormatHandlerActions.LoadFromStream).ToList();
 
             foreach (var (stream, filename) in IterateClipboardContent(dataObject))
             {
@@ -595,87 +594,6 @@ EndSelection:<<<<<<<4
         }
 
         /// <summary>
-        /// Get all images (multiple if file names are available) from the dataObject
-        /// Returned images must be disposed by the calling code!
-        /// </summary>
-        /// <param name="dataObject"></param>
-        /// <returns>IEnumerable of IDrawableContainer</returns>
-        public static IEnumerable<IDrawableContainer> GetDrawables(IDataObject dataObject)
-        {
-            // Get single image, this takes the "best" match
-            IDrawableContainer singleImage = GetDrawable(dataObject);
-            if (singleImage != null)
-            {
-                Log.InfoFormat($"Got {singleImage.GetType()} from clipboard with size {singleImage.Size}");
-                yield return singleImage;
-                yield break;
-            }
-            var fileFormatHandlers = SimpleServiceProvider.Current.GetAllInstances<IFileFormatHandler>();
-            var supportedExtensions = fileFormatHandlers.ExtensionsFor(FileFormatHandlerActions.LoadDrawableFromStream).ToList();
-            var foundContainer = false;
-
-            foreach (var (stream, filename) in IterateClipboardContent(dataObject))
-            {
-                var extension = Path.GetExtension(filename)?.ToLowerInvariant();
-                if (!supportedExtensions.Contains(extension))
-                {
-                    continue;
-                }
-
-                IEnumerable<IDrawableContainer> drawableContainers;
-                try
-                {
-                    // without toList() here, LoadDrawablesFromStream() are called after the stream has been disposed
-                    drawableContainers = fileFormatHandlers.LoadDrawablesFromStream(stream, extension).ToList();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Couldn't read file contents", ex);
-                    continue;
-                }
-                finally
-                {
-                    stream?.Dispose();
-                }
-                // If we get here, there is an image
-                foreach (var container in drawableContainers)
-                {
-                    foundContainer = true;
-                    yield return container;
-                }
-            }
-
-            // we found sth., prevent multiple imports of the same content
-            if (foundContainer) yield break;
-
-            // check if files are supplied
-            foreach (string imageFile in GetImageFilenames(dataObject))
-            {
-                var extension = Path.GetExtension(imageFile)?.ToLowerInvariant();
-                if (!supportedExtensions.Contains(extension))
-                {
-                    continue;
-                }
-                using FileStream fileStream = new FileStream(imageFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-                IEnumerable<IDrawableContainer> drawableContainers;
-                try
-                {
-                    drawableContainers = fileFormatHandlers.LoadDrawablesFromStream(fileStream, extension);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Couldn't read file contents", ex);
-                    continue;
-                }
-                // If we get here, there is an image
-                foreach (var container in drawableContainers)
-                {
-                    yield return container;
-                }
-            }
-        }
-
-        /// <summary>
         /// Get an Image from the IDataObject, don't check for FileDrop
         /// </summary>
         /// <param name="dataObject"></param>
@@ -715,61 +633,6 @@ EndSelection:<<<<<<<4
                 {
                     Log.InfoFormat("Found {0}, trying to retrieve.", currentFormat);
                     returnImage = GetImageForFormat(currentFormat, dataObject);
-                }
-                else
-                {
-                    Log.DebugFormat("Couldn't find format {0}.", currentFormat);
-                }
-
-                if (returnImage != null)
-                {
-                    return returnImage;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Get an IDrawableContainer from the IDataObject, don't check for FileDrop
-        /// </summary>
-        /// <param name="dataObject"></param>
-        /// <returns>Image or null</returns>
-        private static IDrawableContainer GetDrawable(IDataObject dataObject)
-        {
-            if (dataObject == null) return null;
-
-            IDrawableContainer returnImage = null;
-            IList<string> formats = GetFormats(dataObject);
-            string[] retrieveFormats;
-
-            // Found a weird bug, where PNG's from Outlook 2010 are clipped
-            // So I build some special logic to get the best format:
-            if (formats != null && formats.Contains(FORMAT_PNG_OFFICEART) && formats.Contains(DataFormats.Dib))
-            {
-                // Outlook ??
-                Log.Info("Most likely the current clipboard contents come from Outlook, as this has a problem with PNG and others we place the DIB format to the front...");
-                retrieveFormats = new[]
-                {
-                    DataFormats.Dib, FORMAT_BITMAP, FORMAT_FILECONTENTS, FORMAT_PNG_OFFICEART, FORMAT_PNG, FORMAT_JFIF_OFFICEART, FORMAT_JPG, FORMAT_JPEG, FORMAT_JFIF,
-                    DataFormats.Tiff, FORMAT_GIF, FORMAT_HTML
-                };
-            }
-            else
-            {
-                retrieveFormats = new[]
-                {
-                    FORMAT_PNG_OFFICEART, FORMAT_PNG, FORMAT_17, FORMAT_JFIF_OFFICEART, FORMAT_JPG, FORMAT_JPEG, FORMAT_JFIF, DataFormats.Tiff, DataFormats.Dib, FORMAT_BITMAP,
-                    FORMAT_FILECONTENTS, FORMAT_GIF, FORMAT_HTML
-                };
-            }
-
-            foreach (string currentFormat in retrieveFormats)
-            {
-                if (formats != null && formats.Contains(currentFormat))
-                {
-                    Log.InfoFormat("Found {0}, trying to retrieve.", currentFormat);
-                    returnImage = GetDrawableForFormat(currentFormat, dataObject);
                 }
                 else
                 {
@@ -836,70 +699,6 @@ EndSelection:<<<<<<<4
                 return bitmap;
             }
             return null;
-        }
-
-        /// <summary>
-        /// Helper method to try to get an IDrawableContainer in the specified format from the dataObject
-        /// the DIB reader should solve some issues
-        /// It also supports Format17/DibV5, by using the following information: https://stackoverflow.com/a/14335591
-        /// </summary>
-        /// <param name="format">string with the format</param>
-        /// <param name="dataObject">IDataObject</param>
-        /// <returns>IDrawableContainer or null</returns>
-        private static IDrawableContainer GetDrawableForFormat(string format, IDataObject dataObject)
-        {
-            IDrawableContainer drawableContainer = null;
-
-            if (format == FORMAT_HTML)
-            {
-                var textObject = ContentAsString(dataObject, FORMAT_HTML, Encoding.UTF8);
-                if (textObject != null)
-                {
-                    var doc = new HtmlDocument();
-                    doc.LoadHtml(textObject);
-                    var imgNodes = doc.DocumentNode.SelectNodes("//img");
-                    if (imgNodes != null)
-                    {
-                        foreach (var imgNode in imgNodes)
-                        {
-                            var srcAttribute = imgNode.Attributes["src"];
-                            var imageUrl = srcAttribute.Value;
-                            Log.Debug(imageUrl);
-                            drawableContainer = NetworkHelper.DownloadImageAsDrawableContainer(imageUrl);
-                            if (drawableContainer != null)
-                            {
-                                return drawableContainer;
-                            }
-                        }
-                    }
-                }
-            }
-
-            object clipboardObject = GetFromDataObject(dataObject, format);
-            var imageStream = clipboardObject as MemoryStream;
-            if (!IsValidStream(imageStream))
-            {
-                // TODO: add text based, like "HTML Format" support here...
-                // TODO: solve the issue that we do not have a factory for the ImageContainer
-                /*var image = clipboardObject as Image;
-                if (image != null)
-                {
-                    return new ImageContainer(this)
-                    {
-                        Image = image,
-                        Left = x,
-                        Top = y
-                    };
-                }
-                return clipboardObject as Image;
-*/
-                return null;
-            }
-
-            // From here, imageStream is a valid stream
-            var fileFormatHandlers = SimpleServiceProvider.Current.GetAllInstances<IFileFormatHandler>();
-
-            return fileFormatHandlers.LoadDrawablesFromStream(imageStream, format).FirstOrDefault();
         }
 
         /// <summary>

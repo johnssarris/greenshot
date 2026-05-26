@@ -43,8 +43,6 @@ using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
 using Greenshot.Configuration;
 using Greenshot.Destinations;
-using Greenshot.Editor.Destinations;
-using Greenshot.Editor.Drawing;
 using Greenshot.Forms;
 using Greenshot.Native;
 using log4net;
@@ -403,19 +401,6 @@ namespace Greenshot.Helpers
 
                         _capture.CaptureDetails.Title = "Clipboard";
                         _capture.CaptureDetails.AddMetaData("source", "Clipboard");
-                        // Force Editor, keep picker
-                        if (_capture.CaptureDetails.HasDestination(nameof(WellKnownDestinations.Picker)))
-                        {
-                            _capture.CaptureDetails.ClearDestinations();
-                            _capture.CaptureDetails.AddDestination(DestinationHelper.GetDestination(EditorDestination.DESIGNATION));
-                            _capture.CaptureDetails.AddDestination(DestinationHelper.GetDestination(nameof(WellKnownDestinations.Picker)));
-                        }
-                        else
-                        {
-                            _capture.CaptureDetails.ClearDestinations();
-                            _capture.CaptureDetails.AddDestination(DestinationHelper.GetDestination(EditorDestination.DESIGNATION));
-                        }
-
                         HandleCapture();
                     }
                     else
@@ -430,24 +415,6 @@ namespace Greenshot.Helpers
 
                     if (!string.IsNullOrEmpty(filename))
                     {
-                        // TODO: Fix that the Greenshot format needs a separate code path
-                        try
-                        {
-                            if (filename.ToLower().EndsWith("." + OutputFormat.greenshot))
-                            {
-                                ISurface surface = new Surface();
-                                surface = ImageIO.LoadGreenshotSurface(filename, surface);
-                                surface.CaptureDetails = _capture.CaptureDetails;
-                                DestinationHelper.GetDestination(EditorDestination.DESIGNATION).ExportCapture(true, surface, _capture.CaptureDetails);
-                                break;
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Error(e.Message, e);
-                            MessageBox.Show(Language.GetFormattedString(LangKey.error_openfile, filename));
-                        }
-
                         // TODO: Remove Image loading for here
                         try
                         {
@@ -472,19 +439,6 @@ namespace Greenshot.Helpers
                         else
                         {
                             _capture = new Capture(fileImage);
-                        }
-
-                        // Force Editor, keep picker, this is currently the only useful destination
-                        if (_capture.CaptureDetails.HasDestination(nameof(WellKnownDestinations.Picker)))
-                        {
-                            _capture.CaptureDetails.ClearDestinations();
-                            _capture.CaptureDetails.AddDestination(DestinationHelper.GetDestination(EditorDestination.DESIGNATION));
-                            _capture.CaptureDetails.AddDestination(DestinationHelper.GetDestination(nameof(WellKnownDestinations.Picker)));
-                        }
-                        else
-                        {
-                            _capture.CaptureDetails.ClearDestinations();
-                            _capture.CaptureDetails.AddDestination(DestinationHelper.GetDestination(EditorDestination.DESIGNATION));
                         }
 
                         HandleCapture();
@@ -905,11 +859,7 @@ namespace Greenshot.Helpers
                     }
                     else
                     {
-                        ExportInformation exportInformation = destination.ExportCapture(false, surface, captureDetails);
-                        if (EditorDestination.DESIGNATION.Equals(destination.Designation) && exportInformation.ExportMade)
-                        {
-                            canDisposeSurface = false;
-                        }
+                        destination.ExportCapture(false, surface, captureDetails);
                     }
                 }
 

@@ -29,8 +29,8 @@ using Greenshot.Base.Effects;
 using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
+using Greenshot.Base.Core;
 using Greenshot.Configuration;
-using Greenshot.Editor.Helpers;
 using Greenshot.Forms;
 using log4net;
 

@@ -21,8 +21,6 @@
 
 using Greenshot.Base.Controls;
 using Greenshot.Base.Core;
-using Greenshot.Editor.Configuration;
-using Greenshot.Editor.Controls;
 
 namespace Greenshot.Forms {
 	partial class SettingsForm {
@@ -97,10 +95,8 @@ namespace Greenshot.Forms {
 			this.window_hotkeyControl = new HotkeyControl();
 			this.fullscreen_hotkeyControl = new HotkeyControl();
 			this.tab_capture = new GreenshotTabPage();
-			this.groupbox_editor = new GreenshotGroupBox();
 			this.numericUpdownIconSize = new System.Windows.Forms.NumericUpDown();
 			this.label_icon_size = new GreenshotLabel();
-			this.checkbox_editor_match_capture_size = new GreenshotCheckBox();
 			this.groupbox_windowscapture = new GreenshotGroupBox();
 			this.colorButton_window_background = new ColorButton();
 			this.radiobuttonWindowCapture = new GreenshotRadioButton();
@@ -133,10 +129,8 @@ namespace Greenshot.Forms {
 			this.button_pluginconfigure = new GreenshotButton();
 			this.tab_expert = new GreenshotTabPage();
 			this.groupbox_expert = new GreenshotGroupBox();
-			this.checkbox_reuseeditor = new GreenshotCheckBox();
 			this.checkbox_minimizememoryfootprint = new GreenshotCheckBox();
 			this.checkbox_checkunstableupdates = new GreenshotCheckBox();
-			this.checkbox_suppresssavedialogatclose = new GreenshotCheckBox();
 			this.label_counter = new GreenshotLabel();
 			this.textbox_counter = new GreenshotTextBox();
 			this.label_footerpattern = new GreenshotLabel();
@@ -159,7 +153,6 @@ namespace Greenshot.Forms {
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown_daysbetweencheck)).BeginInit();
 			this.groupbox_hotkeys.SuspendLayout();
 			this.tab_capture.SuspendLayout();
-			this.groupbox_editor.SuspendLayout();
 			this.groupbox_windowscapture.SuspendLayout();
 			this.groupbox_capture.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTime)).BeginInit();
@@ -619,7 +612,6 @@ namespace Greenshot.Forms {
 			// 
 			// tab_capture
 			// 
-			this.tab_capture.Controls.Add(this.groupbox_editor);
 			this.tab_capture.Controls.Add(this.groupbox_windowscapture);
 			this.tab_capture.Controls.Add(this.groupbox_capture);
 			this.tab_capture.LanguageKey = "settings_capture";
@@ -628,27 +620,6 @@ namespace Greenshot.Forms {
 			this.tab_capture.Size = new System.Drawing.Size(423, 351);
 			this.tab_capture.TabIndex = 3;
 			this.tab_capture.UseVisualStyleBackColor = true;
-			// 
-			// groupbox_editor
-			// 
-			this.groupbox_editor.Controls.Add(this.checkbox_editor_match_capture_size);
-			this.groupbox_editor.LanguageKey = "settings_editor";
-			this.groupbox_editor.Location = new System.Drawing.Point(4, 277);
-			this.groupbox_editor.Name = "groupbox_editor";
-			this.groupbox_editor.Size = new System.Drawing.Size(416, 50);
-			this.groupbox_editor.TabIndex = 27;
-			this.groupbox_editor.TabStop = false;
-			// 
-			// checkbox_editor_match_capture_size
-			// 
-			this.checkbox_editor_match_capture_size.LanguageKey = "editor_match_capture_size";
-			this.checkbox_editor_match_capture_size.Location = new System.Drawing.Point(6, 19);
-			this.checkbox_editor_match_capture_size.Name = "checkbox_editor_match_capture_size";
-			this.checkbox_editor_match_capture_size.PropertyName = nameof(IEditorConfiguration.MatchSizeToCapture);
-			this.checkbox_editor_match_capture_size.SectionName = "Editor";
-			this.checkbox_editor_match_capture_size.Size = new System.Drawing.Size(397, 24);
-			this.checkbox_editor_match_capture_size.TabIndex = 11;
-			this.checkbox_editor_match_capture_size.UseVisualStyleBackColor = true;
 			// 
 			// groupbox_windowscapture
 			// 
@@ -1042,10 +1013,8 @@ namespace Greenshot.Forms {
 			// 
 			// groupbox_expert
 			// 
-			this.groupbox_expert.Controls.Add(this.checkbox_reuseeditor);
 			this.groupbox_expert.Controls.Add(this.checkbox_minimizememoryfootprint);
 			this.groupbox_expert.Controls.Add(this.checkbox_checkunstableupdates);
-			this.groupbox_expert.Controls.Add(this.checkbox_suppresssavedialogatclose);
 			this.groupbox_expert.Controls.Add(this.label_counter);
 			this.groupbox_expert.Controls.Add(this.textbox_counter);
 			this.groupbox_expert.Controls.Add(this.label_footerpattern);
@@ -1063,17 +1032,6 @@ namespace Greenshot.Forms {
 			this.groupbox_expert.TabIndex = 17;
 			this.groupbox_expert.TabStop = false;
 			this.groupbox_expert.Text = "Expert";
-			// 
-			// checkbox_reuseeditor
-			//
-			this.checkbox_reuseeditor.LanguageKey = "expertsettings_reuseeditorifpossible";
-			this.checkbox_reuseeditor.Location = new System.Drawing.Point(10, 220);
-			this.checkbox_reuseeditor.Name = "checkbox_reuseeditor";
-			this.checkbox_reuseeditor.PropertyName = nameof(IEditorConfiguration.ReuseEditor);
-			this.checkbox_reuseeditor.SectionName = "Editor";
-			this.checkbox_reuseeditor.Size = new System.Drawing.Size(394, 20);
-			this.checkbox_reuseeditor.TabIndex = 9;
-			this.checkbox_reuseeditor.UseVisualStyleBackColor = true;
 			// 
 			// checkbox_minimizememoryfootprint
 			//
@@ -1094,17 +1052,6 @@ namespace Greenshot.Forms {
 			this.checkbox_checkunstableupdates.Size = new System.Drawing.Size(394, 20);
 			this.checkbox_checkunstableupdates.TabIndex = 7;
 			this.checkbox_checkunstableupdates.UseVisualStyleBackColor = true;
-			// 
-			// checkbox_suppresssavedialogatclose
-			//
-			this.checkbox_suppresssavedialogatclose.LanguageKey = "expertsettings_suppresssavedialogatclose";
-			this.checkbox_suppresssavedialogatclose.Location = new System.Drawing.Point(10, 166);
-			this.checkbox_suppresssavedialogatclose.Name = "checkbox_suppresssavedialogatclose";
-			this.checkbox_suppresssavedialogatclose.PropertyName = nameof(IEditorConfiguration.SuppressSaveDialogAtClose);
-			this.checkbox_suppresssavedialogatclose.SectionName = "Editor";
-			this.checkbox_suppresssavedialogatclose.Size = new System.Drawing.Size(394, 20);
-			this.checkbox_suppresssavedialogatclose.TabIndex = 6;
-			this.checkbox_suppresssavedialogatclose.UseVisualStyleBackColor = true;
 			// 
 			// label_counter
 			//
@@ -1238,7 +1185,6 @@ namespace Greenshot.Forms {
 			this.groupbox_hotkeys.ResumeLayout(false);
 			this.groupbox_hotkeys.PerformLayout();
 			this.tab_capture.ResumeLayout(false);
-			this.groupbox_editor.ResumeLayout(false);
 			this.groupbox_windowscapture.ResumeLayout(false);
 			this.groupbox_windowscapture.PerformLayout();
 			this.groupbox_capture.ResumeLayout(false);
@@ -1265,8 +1211,6 @@ namespace Greenshot.Forms {
 		private System.Windows.Forms.ColumnHeader destination;
 		private GreenshotCheckBox checkbox_picker;
 		private System.Windows.Forms.ListView listview_destinations;
-		private GreenshotGroupBox groupbox_editor;
-		private GreenshotCheckBox checkbox_editor_match_capture_size;
 		private System.Windows.Forms.NumericUpDown numericUpDown_daysbetweencheck;
 		private GreenshotGroupBox groupbox_network;
 		private GreenshotCheckBox checkbox_usedefaultproxy;
@@ -1337,9 +1281,7 @@ namespace Greenshot.Forms {
 		private GreenshotLabel label_counter;
 		private GreenshotTextBox textbox_counter;
 		private GreenshotCheckBox checkbox_reducecolors;
-		private GreenshotCheckBox checkbox_suppresssavedialogatclose;
 		private GreenshotCheckBox checkbox_checkunstableupdates;
-        private GreenshotCheckBox checkbox_reuseeditor;
         private GreenshotCheckBox checkbox_alwaysshowprintoptionsdialog;
         private GreenshotGroupBox groupBoxColors;
         private GreenshotCheckBox checkboxPrintInverted;
