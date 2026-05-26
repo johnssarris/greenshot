@@ -49,7 +49,6 @@ using Greenshot.Base.Core.Enums;
 using Greenshot.Base.Core.FileFormatHandlers;
 using Greenshot.Base.Help;
 using Greenshot.Base.Interfaces;
-using Greenshot.Base.Interfaces.Ocr;
 using Greenshot.Configuration;
 using Greenshot.Controls;
 using Greenshot.Destinations;
@@ -58,7 +57,6 @@ using Greenshot.Editor.Destinations;
 using Greenshot.Editor.Drawing;
 using Greenshot.Editor.Forms;
 using Greenshot.Helpers;
-using Greenshot.Plugin.Win10;
 using Greenshot.Processors;
 using log4net;
 
@@ -295,9 +293,6 @@ namespace Greenshot.Forms
             SimpleServiceProvider.Current.AddService<ICaptureHelper>(this);
 
             // Windows specific services
-            SimpleServiceProvider.Current.AddService<INotificationService>(ToastNotificationService.Create());
-            // Set this as IOcrProvider
-            SimpleServiceProvider.Current.AddService<IOcrProvider>(new Win10OcrProvider());
 
             // Factory for surface objects
             ISurface SurfaceFactory() => new Surface();
@@ -446,9 +441,7 @@ namespace Greenshot.Forms
                 new ClipboardDestination(),
                 new PrinterDestination(),
                 new EmailDestination(),
-                new PickerDestination(),
-                new Win10ShareDestination(),
-                new Win10OcrDestination()
+                new PickerDestination()
             };
             
             bool useEditor = false;
