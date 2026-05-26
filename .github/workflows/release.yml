@@ -105,6 +105,8 @@ jobs:
     needs:
       - build
       - portable
+    permissions:
+      contents: write
     steps:
 
       - name: Checkout repository
