@@ -19,7 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Greenshot.Base;
@@ -74,23 +73,7 @@ namespace Greenshot.Destinations
 
         public override int Priority => 3;
 
-        public override bool IsActive
-        {
-            get
-            {
-                if (_isActiveFlag)
-                {
-                    // Disable if the office plugin is installed and the client is outlook
-                    var outlookDestination = Type.GetType("Greenshot.Plugin.Office.Destinations.OutlookDestination,Greenshot.Plugin.Office", false);
-                    if (outlookDestination != null && _mapiClient.ToLower().Contains("outlook"))
-                    {
-                        _isActiveFlag = false;
-                    }
-                }
-
-                return base.IsActive && _isActiveFlag;
-            }
-        }
+        public override bool IsActive => base.IsActive && _isActiveFlag;
 
         public override Keys EditorShortcutKeys => Keys.Control | Keys.E;
 

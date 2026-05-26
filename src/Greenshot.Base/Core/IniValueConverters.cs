@@ -56,7 +56,6 @@ namespace Greenshot.Base.Core
             _registered = true;
 
             ValueConverterRegistry.Register(new ByteValueConverter());
-            ValueConverterRegistry.Register(new DateTimeOffsetValueConverter());
             ValueConverterRegistry.Register(new ColorValueConverter());
             ValueConverterRegistry.Register(new NativePointValueConverter());
             ValueConverterRegistry.Register(new NativeRectValueConverter());
@@ -78,24 +77,6 @@ namespace Greenshot.Base.Core
         public override byte ConvertFromString(string raw, byte defaultValue = default) => byte.TryParse(raw?.Trim(), out var result) ? result : defaultValue;
 
         public override string ConvertToString(byte value) => value.ToString(CultureInfo.InvariantCulture);
-    }
-
-    /// <summary>
-    /// Converter for <see cref="DateTimeOffset"/> using ISO 8601 round-trip format.
-    /// Required for <c>AccessTokenExpires</c> properties (RuntimeOnly) in Box and Dropbox configs.
-    /// </summary>
-    public sealed class DateTimeOffsetValueConverter : ValueConverterBase<DateTimeOffset>
-    {
-        public override DateTimeOffset ConvertFromString(string raw, DateTimeOffset defaultValue = default)
-        {
-            if (string.IsNullOrWhiteSpace(raw)) return defaultValue;
-            return DateTimeOffset.TryParse(raw.Trim(), CultureInfo.InvariantCulture,
-                DateTimeStyles.RoundtripKind, out var result)
-                ? result
-                : defaultValue;
-        }
-
-        public override string ConvertToString(DateTimeOffset value) => value.ToString("O", CultureInfo.InvariantCulture);
     }
 
     // ── System.Drawing ───────────────────────────────────────────────────────

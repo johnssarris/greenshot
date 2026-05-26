@@ -157,15 +157,6 @@ namespace Greenshot.Base.Core
                 UpdateCheckInterval = 14;
             }
 
-            // Enable OneNote if upgrading from 1.1
-            if (ExcludeDestinations != null && ExcludeDestinations.Contains("OneNote"))
-            {
-                if (LastSaveWithVersion != null && LastSaveWithVersion.StartsWith("1.1"))
-                {
-                    ExcludeDestinations.Remove("OneNote");
-                }
-            }
-
             // Make sure there is an output!
             if (OutputDestinations.Count == 0)
             {
