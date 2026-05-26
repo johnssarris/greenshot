@@ -324,14 +324,6 @@ namespace Greenshot.Forms
             // This forces the registration of all processors inside Greenshot itself.
             RegisterInternalProcessors();
 
-            // if language is not set, show language dialog
-            if (string.IsNullOrEmpty(_conf.Language))
-            {
-                LanguageDialog languageDialog = LanguageDialog.GetInstance();
-                languageDialog.ShowDialog();
-                _conf.Language = languageDialog.SelectedLanguage;
-            }
-
             // Disable access to the settings, for feature #3521446
             contextmenu_settings.Visible = !_conf.DisableSettings;
 

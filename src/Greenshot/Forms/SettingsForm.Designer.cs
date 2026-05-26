@@ -59,8 +59,6 @@ namespace Greenshot.Forms {
 			this.browse = new System.Windows.Forms.Button();
 			this.label_screenshotname = new GreenshotLabel();
 			this.textbox_screenshotname = new GreenshotTextBox();
-			this.label_language = new GreenshotLabel();
-			this.combobox_language = new System.Windows.Forms.ComboBox();
 			this.combobox_primaryimageformat = new GreenshotComboBox();
 			this.label_primaryimageformat = new GreenshotLabel();
 			this.groupbox_preferredfilesettings = new GreenshotGroupBox();
@@ -229,25 +227,7 @@ namespace Greenshot.Forms {
 			this.textbox_screenshotname.Size = new System.Drawing.Size(233, 20);
 			this.textbox_screenshotname.TabIndex = 3;
 			this.textbox_screenshotname.TextChanged += new System.EventHandler(this.FilenamePatternChanged);
-			// 
-			// label_language
-			// 
-			this.label_language.LanguageKey = "settings_language";
-			this.label_language.Location = new System.Drawing.Point(6, 20);
-			this.label_language.Name = "label_language";
-			this.label_language.Size = new System.Drawing.Size(181, 23);
-			this.label_language.TabIndex = 10;
-			// 
-			// combobox_language
-			// 
-			this.combobox_language.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.combobox_language.FormattingEnabled = true;
-			this.combobox_language.Location = new System.Drawing.Point(193, 17);
-			this.combobox_language.MaxDropDownItems = 15;
-			this.combobox_language.Name = "combobox_language";
-			this.combobox_language.Size = new System.Drawing.Size(210, 21);
-			this.combobox_language.TabIndex = 0;
-			// 
+			//
 			// combobox_primaryimageformat
 			// 
 			this.combobox_primaryimageformat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -306,8 +286,6 @@ namespace Greenshot.Forms {
 			// 
             // groupbox_applicationsettings
 			// 
-			this.groupbox_applicationsettings.Controls.Add(this.label_language);
-			this.groupbox_applicationsettings.Controls.Add(this.combobox_language);
 			this.groupbox_applicationsettings.Controls.Add(this.numericUpdownIconSize);
 			this.groupbox_applicationsettings.Controls.Add(this.label_icon_size);
 			this.groupbox_applicationsettings.Controls.Add(this.checkbox_autostartshortcut);
@@ -1256,8 +1234,6 @@ namespace Greenshot.Forms {
 		private GreenshotCheckBox checkbox_playsound;
 		private GreenshotLabel label_primaryimageformat;
 		private GreenshotComboBox combobox_primaryimageformat;
-		private System.Windows.Forms.ComboBox combobox_language;
-		private GreenshotLabel label_language;
 		private GreenshotTextBox textbox_screenshotname;
 		private GreenshotLabel label_screenshotname;
 		private System.Windows.Forms.Button browse;
