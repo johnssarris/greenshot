@@ -34,6 +34,8 @@ namespace Greenshot.Destinations
     /// </summary>
     public class ClipboardDestination : AbstractDestination, IAcceptsPreRenderedImage
     {
+        public const string DESIGNATION = nameof(WellKnownDestinations.Clipboard);
+
         public override string Designation => nameof(WellKnownDestinations.Clipboard);
 
         public override string Description

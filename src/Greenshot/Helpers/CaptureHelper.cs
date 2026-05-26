@@ -643,9 +643,10 @@ namespace Greenshot.Helpers
                 AddConfiguredDestination();
             }
 
-            // Create Surface with capture, this way elements can be added automatically (like the mouse cursor)
-            Surface surface = new Surface(_capture)
+            ISurface surface = new SimpleSurface
             {
+                Image = _capture.Image,
+                CaptureDetails = _capture.CaptureDetails,
                 Modified = !outputMade
             };
 
