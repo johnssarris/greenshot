@@ -21,6 +21,7 @@
 
 using System;
 using System.Drawing;
+using Dapplo.Windows.Common.Extensions;
 using Dapplo.Windows.Common.Structs;
 
 namespace Greenshot.Base.Core
