@@ -71,7 +71,7 @@ namespace Greenshot.Base.Core
         // see: https://msdn.microsoft.com/en-us/library/ms649015%28v=v
         // s.85%29.aspx
         // or:  https://msdn.microsoft.com/en-us/library/Aa767917.aspx
-        private const string HtmlClipboardString = @"Version:0.9
+        private const string HtmlClipboardTemplate = @"Version:0.9
 StartHTML:<<<<<<<1
 EndHTML:<<<<<<<2
 StartFragment:<<<<<<<3
@@ -85,26 +85,7 @@ EndSelection:<<<<<<<4
 </HEAD>
 <BODY>
 <!--StartFragment -->
-<img border='0' src='file:///${file}' width='${width}' height='${height}'>
-<!--EndFragment -->
-</BODY>
-</HTML>";
-
-        private const string HtmlClipboardBase64String = @"Version:0.9
-StartHTML:<<<<<<<1
-EndHTML:<<<<<<<2
-StartFragment:<<<<<<<3
-EndFragment:<<<<<<<4
-StartSelection:<<<<<<<3
-EndSelection:<<<<<<<4
-<!DOCTYPE>
-<HTML>
-<HEAD>
-<TITLE>Greenshot capture</TITLE>
-</HEAD>
-<BODY>
-<!--StartFragment -->
-<img border='0' src='data:image/${format};base64,${data}' width='${width}' height='${height}'>
+<img border='0' src='${src}' width='${width}' height='${height}'>
 <!--EndFragment -->
 </BODY>
 </HTML>";
@@ -727,33 +708,22 @@ EndSelection:<<<<<<<4
         }
 
         private static string GetHtmlString(ISurface surface, string filename)
-        {
-            string utf8EncodedHtmlString = Encoding.GetEncoding(0).GetString(Encoding.UTF8.GetBytes(HtmlClipboardString));
-            utf8EncodedHtmlString = utf8EncodedHtmlString.Replace("${width}", surface.Image.Width.ToString());
-            utf8EncodedHtmlString = utf8EncodedHtmlString.Replace("${height}", surface.Image.Height.ToString());
-            utf8EncodedHtmlString = utf8EncodedHtmlString.Replace("${file}", filename.Replace("\\", "/"));
-            StringBuilder sb = new StringBuilder();
-            sb.Append(utf8EncodedHtmlString);
-            sb.Replace("<<<<<<<1", (utf8EncodedHtmlString.IndexOf("<HTML>", StringComparison.Ordinal) + "<HTML>".Length).ToString("D8"));
-            sb.Replace("<<<<<<<2", (utf8EncodedHtmlString.IndexOf("</HTML>", StringComparison.Ordinal)).ToString("D8"));
-            sb.Replace("<<<<<<<3", (utf8EncodedHtmlString.IndexOf("<!--StartFragment -->", StringComparison.Ordinal) + "<!--StartFragment -->".Length).ToString("D8"));
-            sb.Replace("<<<<<<<4", (utf8EncodedHtmlString.IndexOf("<!--EndFragment -->", StringComparison.Ordinal)).ToString("D8"));
-            return sb.ToString();
-        }
+            => BuildHtmlClipboard(surface, $"file:///{filename.Replace("\\", "/")}");
 
         private static string GetHtmlDataUrlString(ISurface surface, MemoryStream pngStream)
+            => BuildHtmlClipboard(surface, $"data:image/png;base64,{Convert.ToBase64String(pngStream.ToArray())}");
+
+        private static string BuildHtmlClipboard(ISurface surface, string imgSrc)
         {
-            string utf8EncodedHtmlString = Encoding.GetEncoding(0).GetString(Encoding.UTF8.GetBytes(HtmlClipboardBase64String));
-            utf8EncodedHtmlString = utf8EncodedHtmlString.Replace("${width}", surface.Image.Width.ToString());
-            utf8EncodedHtmlString = utf8EncodedHtmlString.Replace("${height}", surface.Image.Height.ToString());
-            utf8EncodedHtmlString = utf8EncodedHtmlString.Replace("${format}", "png");
-            utf8EncodedHtmlString = utf8EncodedHtmlString.Replace("${data}", Convert.ToBase64String(pngStream.ToArray()));
-            StringBuilder sb = new StringBuilder();
-            sb.Append(utf8EncodedHtmlString);
-            sb.Replace("<<<<<<<1", (utf8EncodedHtmlString.IndexOf("<HTML>", StringComparison.Ordinal) + "<HTML>".Length).ToString("D8"));
-            sb.Replace("<<<<<<<2", (utf8EncodedHtmlString.IndexOf("</HTML>", StringComparison.Ordinal)).ToString("D8"));
-            sb.Replace("<<<<<<<3", (utf8EncodedHtmlString.IndexOf("<!--StartFragment -->", StringComparison.Ordinal) + "<!--StartFragment -->".Length).ToString("D8"));
-            sb.Replace("<<<<<<<4", (utf8EncodedHtmlString.IndexOf("<!--EndFragment -->", StringComparison.Ordinal)).ToString("D8"));
+            string html = Encoding.GetEncoding(0).GetString(Encoding.UTF8.GetBytes(HtmlClipboardTemplate));
+            html = html.Replace("${width}", surface.Image.Width.ToString())
+                       .Replace("${height}", surface.Image.Height.ToString())
+                       .Replace("${src}", imgSrc);
+            var sb = new StringBuilder(html);
+            sb.Replace("<<<<<<<1", (html.IndexOf("<HTML>", StringComparison.Ordinal) + "<HTML>".Length).ToString("D8"));
+            sb.Replace("<<<<<<<2", html.IndexOf("</HTML>", StringComparison.Ordinal).ToString("D8"));
+            sb.Replace("<<<<<<<3", (html.IndexOf("<!--StartFragment -->", StringComparison.Ordinal) + "<!--StartFragment -->".Length).ToString("D8"));
+            sb.Replace("<<<<<<<4", html.IndexOf("<!--EndFragment -->", StringComparison.Ordinal).ToString("D8"));
             return sb.ToString();
         }
 
