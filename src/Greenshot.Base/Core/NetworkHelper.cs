@@ -31,7 +31,6 @@ using System.Text.RegularExpressions;
 using Greenshot.Base.Core.FileFormatHandlers;
 using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
-using Greenshot.Base.Interfaces.Drawing;
 using Greenshot.Base.Interfaces.Plugin;
 using log4net;
 
@@ -89,68 +88,6 @@ namespace Greenshot.Base.Core
             return memoryStream;
         }
 
-        /// <summary>
-        /// Download the uri to build an IDrawableContainer
-        /// </summary>
-        /// <param name="url">Of an image</param>
-        /// <returns>IDrawableContainer</returns>
-        public static IDrawableContainer DownloadImageAsDrawableContainer(string url)
-        {
-            var fileFormatHandlers = SimpleServiceProvider.Current.GetAllInstances<IFileFormatHandler>();
-            var extensions = string.Join("|", fileFormatHandlers.ExtensionsFor(FileFormatHandlerActions.LoadFromStream));
-
-            var imageUrlRegex = new Regex($@"(http|https)://.*(?<extension>{extensions})");
-            var match = imageUrlRegex.Match(url);
-            try
-            {
-                using var memoryStream = GetAsMemoryStream(url);
-                try
-                {
-                    var extension = match.Success ? match.Groups["extension"]?.Value : null;
-                    var drawableContainer = fileFormatHandlers.LoadDrawablesFromStream(memoryStream, extension).FirstOrDefault();
-                    if (drawableContainer != null)
-                    {
-                        return drawableContainer;
-                    }
-                }
-                catch (Exception)
-                {
-                    // If we arrive here, the image loading didn't work, try to see if the response has a http(s) URL to an image and just take this instead.
-                    memoryStream.Seek(0, SeekOrigin.Begin);
-                    string content;
-                    using (var streamReader = new StreamReader(memoryStream, Encoding.UTF8, true))
-                    {
-                        content = streamReader.ReadLine();
-                    }
-
-                    if (string.IsNullOrEmpty(content))
-                    {
-                        throw;
-                    }
-
-                    match = imageUrlRegex.Match(content);
-                    if (!match.Success)
-                    {
-                        throw;
-                    }
-
-                    using var memoryStream2 = GetAsMemoryStream(match.Value);
-
-                    var extension = match.Success ? match.Groups["extension"]?.Value : null;
-                    var drawableContainer = fileFormatHandlers.LoadDrawablesFromStream(memoryStream2, extension).FirstOrDefault();
-                    if (drawableContainer != null)
-                    {
-                        return drawableContainer;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error("Problem downloading the image from: " + url, e);
-            }
-
-            return null;
-        }
 
         /// <summary>
         /// Download the uri to create a Bitmap

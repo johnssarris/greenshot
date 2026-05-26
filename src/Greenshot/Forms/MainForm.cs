@@ -49,13 +49,10 @@ using Greenshot.Base.Core.Enums;
 using Greenshot.Base.Core.FileFormatHandlers;
 using Greenshot.Base.Help;
 using Greenshot.Base.Interfaces;
+using Greenshot.Base.Core;
 using Greenshot.Configuration;
 using Greenshot.Controls;
 using Greenshot.Destinations;
-using Greenshot.Editor;
-using Greenshot.Editor.Destinations;
-using Greenshot.Editor.Drawing;
-using Greenshot.Editor.Forms;
 using Greenshot.Helpers;
 using Greenshot.Processors;
 using log4net;
@@ -199,8 +196,7 @@ namespace Greenshot.Forms
                     return;
                 }
 
-                // Make sure we handle END Session correctly
-                RestartManagerHelper.RegisterForRestart();
+                // (restart-manager integration removed with editor)
 
                 // Make sure we can use forms
                 WindowsFormsHost.EnableWindowsFormsInterop();
@@ -295,7 +291,7 @@ namespace Greenshot.Forms
             // Windows specific services
 
             // Factory for surface objects
-            ISurface SurfaceFactory() => new Surface();
+            ISurface SurfaceFactory() => new SimpleSurface();
 
             SimpleServiceProvider.Current.AddService((Func<ISurface>) SurfaceFactory);
 
@@ -322,8 +318,6 @@ namespace Greenshot.Forms
 
             // Load all the plugins, and while doing to load the configuration
             PluginHelper.Instance.LoadPlugins();
-
-            EditorInitialize.Initialize();
 
             // This forces the registration of all destinations inside Greenshot itself.
             RegisterInternalDestinations();
@@ -366,7 +360,7 @@ namespace Greenshot.Forms
             // we should have at least one!
             if (_conf.OutputDestinations.Count == 0)
             {
-                _conf.OutputDestinations.Add(EditorDestination.DESIGNATION);
+                _conf.OutputDestinations.Add(ClipboardDestination.DESIGNATION);
             }
 
             if (_conf.DisableQuickSettings)
@@ -401,10 +395,6 @@ namespace Greenshot.Forms
             // Hook up received event:
             _copyData.CopyDataReceived += CopyDataDataReceived;
 
-            if (options.Restore)
-            {
-                RestartManagerHelper.RestoreState();
-            }
             // Check if it's the first time launch?
             if (_conf.IsFirstLaunch)
             {
@@ -443,27 +433,6 @@ namespace Greenshot.Forms
                 new EmailDestination(),
                 new PickerDestination()
             };
-            
-            bool useEditor = false;
-            if (WindowsVersion.IsWindows10OrLater)
-            {
-                int len = 250;
-                var stringBuilder = new StringBuilder(len);
-                using var proc = Process.GetCurrentProcess();
-                var err = Kernel32Api.GetPackageFullName(proc.Handle, ref len, stringBuilder);
-                if (err != 0)
-                {
-                    useEditor = true;
-                }
-            } else
-            {
-                useEditor = true;
-            }
-
-            if (useEditor)
-            {
-                internalDestinations.Add(new EditorDestination());
-            }
 
             foreach (var internalDestination in internalDestinations)
             {
@@ -1234,12 +1203,10 @@ namespace Greenshot.Forms
                     break;
                 case ClickActions.OPEN_LAST_IN_EDITOR:
                     _conf.ValidateAndCorrectOutputFileAsFullpath();
-
                     if (File.Exists(_conf.OutputFileAsFullpath))
                     {
-                        CaptureHelper.CaptureFile(_conf.OutputFileAsFullpath, DestinationHelper.GetDestination(EditorDestination.DESIGNATION));
+                        CaptureHelper.CaptureFile(_conf.OutputFileAsFullpath, null);
                     }
-
                     break;
                 case ClickActions.OPEN_SETTINGS:
                     ShowSetting();
@@ -1252,10 +1219,10 @@ namespace Greenshot.Forms
                     CaptureHelper.CaptureClipboard();
                     break;
                 case ClickActions.OPEN_CLIPBOARD_IN_EDITOR:
-                    CaptureHelper.CaptureClipboard(DestinationHelper.GetDestination(EditorDestination.DESIGNATION));
+                    CaptureHelper.CaptureClipboard();
                     break;
                 case ClickActions.OPEN_FILE_IN_EDITOR:
-                    CaptureFile(DestinationHelper.GetDestination(EditorDestination.DESIGNATION));
+                    CaptureFile(null);
                     break;
                 case ClickActions.CAPTURE_REGION:
                     CaptureHelper.CaptureRegion(false);
@@ -1267,9 +1234,6 @@ namespace Greenshot.Forms
                     CaptureHelper.CaptureWindowInteractive(false);
                     break;
                 case ClickActions.OPEN_EMPTY_EDITOR:
-                    var imageEditor = new ImageEditorForm();
-                    imageEditor.Show();
-                    imageEditor.Activate();
                     break;
             }
         }
@@ -1331,7 +1295,7 @@ namespace Greenshot.Forms
             List<Form> formsToClose = new List<Form>();
             foreach (Form form in Application.OpenForms)
             {
-                if (form.Handle != Handle && form.GetType() != typeof(ImageEditorForm))
+                if (form.Handle != Handle)
                 {
                     formsToClose.Add(form);
                 }

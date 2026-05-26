@@ -28,7 +28,7 @@ using System.Windows.Forms;
 using Greenshot.Base.Core;
 using Dapplo.Ini;
 using Greenshot.Configuration;
-using Greenshot.Editor.Destinations;
+using Greenshot.Destinations;
 using Greenshot.Forms;
 using log4net;
 
@@ -91,7 +91,7 @@ internal static class HotkeyHelper
         }
 
         if (!RegisterWrapper(failedKeys, "CaptureClipboard", "ClipboardHotkey", () => {
-            uiContext?.Post(_ => CaptureHelper.CaptureClipboard(DestinationHelper.GetDestination(EditorDestination.DESIGNATION)), null);
+            uiContext?.Post(_ => CaptureHelper.CaptureClipboard(DestinationHelper.GetDestination(ClipboardDestination.DESIGNATION)), null);
         }, true))
         {
             success = false;

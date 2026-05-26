@@ -22,7 +22,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using Greenshot.Base.Interfaces.Drawing;
 using Greenshot.Base.Interfaces.Plugin;
 
 namespace Greenshot.Base.Interfaces
@@ -40,10 +39,6 @@ namespace Greenshot.Base.Interfaces
         /// The FileFormatHandler supports the following extensions to load from stream
         /// </summary>
         LoadFromStream,
-        /// <summary>
-        /// The FileFormatHandler supports the following extensions to load from stream
-        /// </summary>
-        LoadDrawableFromStream,
         /// <summary>
         /// Specifies which file extensions are supported for loading from file, this is used for the open file dialog
         /// </summary>
@@ -93,14 +88,5 @@ namespace Greenshot.Base.Interfaces
         /// <param name="bitmap"></param>
         /// <returns>bool true if it was successful</returns>
         public bool TryLoadFromStream(Stream stream, string extension, out Bitmap bitmap);
-
-        /// <summary>
-        /// Try to load a drawable container from the stream
-        /// </summary>
-        /// <param name="stream">Stream</param>
-        /// <param name="extension">string</param>
-        /// <param name="parentSurface">ISurface</param>
-        /// <returns>IEnumerable{IDrawableContainer}</returns>
-        public IEnumerable<IDrawableContainer> LoadDrawablesFromStream(Stream stream, string extension, ISurface parentSurface = null);
     }
 }
