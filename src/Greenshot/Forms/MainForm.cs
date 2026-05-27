@@ -47,7 +47,6 @@ using Greenshot.Base.Controls;
 using Greenshot.Base.Core;
 using Greenshot.Base.Core.Enums;
 using Greenshot.Base.Core.FileFormatHandlers;
-using Greenshot.Base.Help;
 using Greenshot.Base.Interfaces;
 using Greenshot.Configuration;
 using Greenshot.Controls;
@@ -262,9 +261,6 @@ namespace Greenshot.Forms
         // Make sure we have only one settings form
         private SettingsForm _settingsForm;
 
-        // Make sure we have only one about form
-        private AboutForm _aboutForm;
-
         // Timer for the double click test
         private readonly Timer _doubleClickTimer = new Timer();
 
@@ -362,8 +358,6 @@ namespace Greenshot.Forms
                 InitializeQuickSettingsMenu();
             }
 
-            SoundHelper.Initialize();
-
             coreConfiguration.PropertyChanged += OnIconSizeChanged;
             OnIconSizeChanged(this, new PropertyChangedEventArgs("IconSize"));
 
@@ -396,11 +390,6 @@ namespace Greenshot.Forms
                 ApplicationStartupHelper.OpenFile(options.Files.First());
             }
 
-            // Start the update check in the background
-            var updateService = new UpdateService();
-            updateService.Startup();
-            SimpleServiceProvider.Current.AddService(updateService);
-
             // Make Greenshot use less memory after startup
             if (_conf.MinimizeWorkingSetSize)
             {
@@ -418,8 +407,6 @@ namespace Greenshot.Forms
                 new FileDestination(),
                 new FileWithDialogDestination(),
                 new ClipboardDestination(),
-                new PrinterDestination(),
-                new EmailDestination(),
                 new PickerDestination()
             };
 
@@ -591,14 +578,6 @@ namespace Greenshot.Forms
                 contextmenu_capturefullscreen.Click += CaptureFullScreenToolStripMenuItemClick;
             }
 
-            var now = DateTime.Now;
-            if ((now.Month == 12 && now.Day > 19 && now.Day < 27) || // christmas
-                (now.Month == 3 && now.Day > 13 && now.Day < 21))
-            {
-                // birthday
-                var resources = new ComponentResourceManager(typeof(MainForm));
-                contextmenu_donate.Image = (Image) resources.GetObject("contextmenu_present.Image");
-            }
         }
 
         private void ContextMenuClosing(object sender, EventArgs e)
@@ -830,19 +809,6 @@ namespace Greenshot.Forms
         }
 
         /// <summary>
-        /// Context menu entry "Support Greenshot"
-        /// </summary>
-        /// <param name="sender">object</param>
-        /// <param name="e">EventArgs</param>
-        private void Contextmenu_DonateClick(object sender, EventArgs e)
-        {
-            Dispatcher.CurrentDispatcher.BeginInvoke(() =>
-            {
-                Process.Start("https://getgreenshot.org/support/?version=" + EnvironmentInfo.GetGreenshotVersion(true));
-            });
-        }
-
-        /// <summary>
         /// Context menu entry "Preferences"
         /// </summary>
         /// <param name="sender"></param>
@@ -881,48 +847,6 @@ namespace Greenshot.Forms
                     _settingsForm = null;
                 }
             }
-        }
-
-        /// <summary>
-        /// The "About Greenshot" entry is clicked
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Contextmenu_AboutClick(object sender, EventArgs e)
-        {
-            ShowAbout();
-        }
-
-        public void ShowAbout()
-        {
-            if (_aboutForm != null)
-            {
-                WindowDetails.ToForeground(_aboutForm.Handle);
-            }
-            else
-            {
-                try
-                {
-                    using (_aboutForm = new AboutForm())
-                    {
-                        _aboutForm.ShowDialog(this);
-                    }
-                }
-                finally
-                {
-                    _aboutForm = null;
-                }
-            }
-        }
-
-        /// <summary>
-        /// The "Help" entry is clicked
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Contextmenu_HelpClick(object sender, EventArgs e)
-        {
-            HelpFileLoader.LoadHelp();
         }
 
         /// <summary>
@@ -1004,28 +928,6 @@ namespace Greenshot.Forms
                 }
 
                 selectList.CheckedChanged += QuickSettingCaptureModeChanged;
-                contextmenu_quicksettings.DropDownItems.Add(selectList);
-            }
-
-            // print options
-            selectList = new ToolStripMenuSelectList("printoptions", true, this)
-            {
-                Text = Language.GetString(LangKey.settings_printoptions)
-            };
-
-            AddBoolMenuItem(selectList, coreSection, "OutputPrintPromptOptions", "settings_alwaysshowprintoptionsdialog", v => _conf.OutputPrintPromptOptions = v, _conf.OutputPrintPromptOptions);
-            AddBoolMenuItem(selectList, coreSection, "OutputPrintAllowRotate", "printoptions_allowrotate", v => _conf.OutputPrintAllowRotate = v, _conf.OutputPrintAllowRotate);
-            AddBoolMenuItem(selectList, coreSection, "OutputPrintAllowEnlarge", "printoptions_allowenlarge", v => _conf.OutputPrintAllowEnlarge = v, _conf.OutputPrintAllowEnlarge);
-            AddBoolMenuItem(selectList, coreSection, "OutputPrintAllowShrink", "printoptions_allowshrink", v => _conf.OutputPrintAllowShrink = v, _conf.OutputPrintAllowShrink);
-            AddBoolMenuItem(selectList, coreSection, "OutputPrintCenter", "printoptions_allowcenter", v => _conf.OutputPrintCenter = v, _conf.OutputPrintCenter);
-            AddBoolMenuItem(selectList, coreSection, "OutputPrintInverted", "printoptions_inverted", v => _conf.OutputPrintInverted = v, _conf.OutputPrintInverted);
-            AddBoolMenuItem(selectList, coreSection, "OutputPrintGrayscale", "printoptions_printgrayscale", v => _conf.OutputPrintGrayscale = v, _conf.OutputPrintGrayscale);
-            AddBoolMenuItem(selectList, coreSection, "OutputPrintMonochrome", "printoptions_printmonochrome", v => _conf.OutputPrintMonochrome = v, _conf.OutputPrintMonochrome);
-            AddBoolMenuItem(selectList, coreSection, "OutputPrintFooter", "printoptions_timestamp", v => _conf.OutputPrintFooter = v, _conf.OutputPrintFooter);
-
-            if (selectList.DropDownItems.Count > 0)
-            {
-                selectList.CheckedChanged += QuickSettingBoolItemChanged;
                 contextmenu_quicksettings.DropDownItems.Add(selectList);
             }
 
@@ -1310,16 +1212,6 @@ namespace Greenshot.Forms
             catch (Exception e)
             {
                 Log.Error("Error unregistering hotkeys!", e);
-            }
-
-            // Now the sound isn't needed anymore
-            try
-            {
-                SoundHelper.Deinitialize();
-            }
-            catch (Exception e)
-            {
-                Log.Error("Error deinitializing sound!", e);
             }
 
             // Inform all registered plugins

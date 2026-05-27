@@ -39,11 +39,6 @@ namespace Greenshot.Base.Interfaces
         void ShowSetting();
 
         /// <summary>
-        /// Show the about window
-        /// </summary>
-        void ShowAbout();
-
-        /// <summary>
         /// Refreshes the user interface to reflect the current state of the application.
         /// </summary>
         void UpdateUi();

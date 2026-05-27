@@ -66,12 +66,6 @@ namespace Greenshot.Base.Core
         partial void OnWebRequestReadWriteTimeoutSet(ref int value) => value = Clamp(value, 1, 100);
 
 
-        /// <summary>
-        /// Coerce the value for the update check interval to stay between 0 and 365, where 0 means "never check for updates". This is to prevent excessive update checking that can occur when the configuration is used on a different PC or when the user accidentally enters an excessively high value. See BUG-1992 for details.
-        /// </summary>
-        /// <param name="value">Update check interval in days</param>
-        partial void OnUpdateCheckIntervalSet(ref int value) => value = Clamp(value, 0, 365);
-
         private string CreateOutputFilePath()
         {
             if (GreenshotEnvironment.IsPortable)
@@ -140,13 +134,6 @@ namespace Greenshot.Base.Core
 
                 // Disable the AutoReduceColors as it causes issues with Mozilla applications and some others
                 OutputFileAutoReduceColors = false;
-            }
-
-            bool isUpgradeFrom12 = LastSaveWithVersion?.StartsWith("1.2") ?? false;
-            // Fix for excessive feed checking
-            if (UpdateCheckInterval != 0 && UpdateCheckInterval <= 7 && isUpgradeFrom12)
-            {
-                UpdateCheckInterval = 14;
             }
 
             // Make sure there is an output!

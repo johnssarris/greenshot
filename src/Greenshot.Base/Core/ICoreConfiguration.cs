@@ -163,55 +163,6 @@ namespace Greenshot.Base.Core
         [DefaultValue(1)]
         uint OutputFileIncrementingNumber { get; set; }
 
-        [Description("Ask for print options when printing?")]
-        [DefaultValue(true)]
-        bool OutputPrintPromptOptions { get; set; }
-
-        [Description("Allow rotating the picture for fitting on paper?")]
-        [DefaultValue(false)]
-        bool OutputPrintAllowRotate { get; set; }
-
-        [Description("Allow growing the picture for fitting on paper?")]
-        [DefaultValue(false)]
-        bool OutputPrintAllowEnlarge { get; set; }
-
-        [Description("Allow shrinking the picture for fitting on paper?")]
-        [DefaultValue(true)]
-        bool OutputPrintAllowShrink { get; set; }
-
-        [Description("Center image when printing?")]
-        [DefaultValue(true)]
-        bool OutputPrintCenter { get; set; }
-
-        [Description("Print image inverted (use e.g. for console captures)")]
-        [DefaultValue(false)]
-        bool OutputPrintInverted { get; set; }
-
-        [Description("Force grayscale printing")]
-        [DefaultValue(false)]
-        bool OutputPrintGrayscale { get; set; }
-
-        [Description("Force monochrome printing")]
-        [DefaultValue(false)]
-        bool OutputPrintMonochrome { get; set; }
-
-        [Description("Threshold for monochrome filter (0 - 255), lower value means less black")]
-        [DefaultValue(127)]
-        [Range(0, 255, ErrorMessage = "Monochrome threshold must be between 0 and 255.")]
-        byte OutputPrintMonochromeThreshold { get; set; }
-
-        [Description("Print footer on print?")]
-        [DefaultValue(true)]
-        bool OutputPrintFooter { get; set; }
-
-        [Description("Footer pattern")]
-        [DefaultValue("${capturetime:d\"D\"} ${capturetime:d\"T\"} - ${title}")]
-        string OutputPrintFooterPattern { get; set; }
-
-        [Description("The wav-file to play when a capture is taken, loaded only once at the Greenshot startup")]
-        [DefaultValue("default")]
-        string NotificationSound { get; set; }
-
         [Description("Use your global proxy?")]
         [DefaultValue(true)]
         bool UseProxy { get; set; }
@@ -229,14 +180,6 @@ namespace Greenshot.Base.Core
 
         [Description("Comma separated list of destinations which should be disabled.")]
         List<string> ExcludeDestinations { get; set; }
-
-        [Description("How many days between every update check? (0=no checks)")]
-        [DefaultValue(14)]
-        [Range(0, int.MaxValue, ErrorMessage = "UpdateCheckInterval must be non-negative.")]
-        int UpdateCheckInterval { get; set; }
-
-        [Description("Last update check")]
-        DateTime LastUpdateCheck { get; set; }
 
         [Description("Enable/disable the access to the settings, can only be changed manually in this .ini")]
         [DefaultValue(false)]
@@ -283,10 +226,6 @@ namespace Greenshot.Base.Core
         [DefaultValue(true)]
         bool WindowCaptureRemoveCorners { get; set; }
 
-        [Description("Also check for unstable version updates")]
-        [DefaultValue(false)]
-        bool CheckForUnstable { get; set; }
-
         [Description("The fixes that are active.")]
         List<string> ActiveTitleFixes { get; set; }
 
@@ -324,18 +263,6 @@ namespace Greenshot.Base.Core
         [DefaultValue(25)]
         [Range(1, int.MaxValue, ErrorMessage = "MaxMenuItemLength must be at least 1.")]
         int MaxMenuItemLength { get; set; }
-
-        [Description("The 'to' field for the email destination")]
-        [DefaultValue("")]
-        string MailApiTo { get; set; }
-
-        [Description("The 'CC' field for the email destination")]
-        [DefaultValue("")]
-        string MailApiCC { get; set; }
-
-        [Description("The 'BCC' field for the email destination")]
-        [DefaultValue("")]
-        string MailApiBCC { get; set; }
 
         [Description("Version of Greenshot which created this .ini")]
         string LastSaveWithVersion { get; }

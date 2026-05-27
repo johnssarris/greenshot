@@ -224,10 +224,6 @@ namespace Greenshot.Helpers
 
         private void DoCaptureFeedback()
         {
-            if (CoreConfig.PlayCameraSound)
-            {
-                SoundHelper.Play();
-            }
         }
 
         /// <summary>

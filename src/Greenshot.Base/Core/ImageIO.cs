@@ -202,46 +202,6 @@ namespace Greenshot.Base.Core
                 }
             }
 
-            // check for color reduction, forced or automatically, only when the DisableReduceColors is false 
-            if (outputSettings.DisableReduceColors || (!CoreConfig.OutputFileAutoReduceColors && !outputSettings.ReduceColors))
-            {
-                return disposeImage;
-            }
-
-            bool isAlpha = Image.IsAlphaPixelFormat(imageToSave.PixelFormat);
-            if (outputSettings.ReduceColors || (!isAlpha && CoreConfig.OutputFileAutoReduceColors))
-            {
-                using var quantizer = new WuQuantizer((Bitmap) imageToSave);
-                int colorCount = quantizer.GetColorCount();
-                Log.InfoFormat("Image with format {0} has {1} colors", imageToSave.PixelFormat, colorCount);
-                if (!outputSettings.ReduceColors && colorCount >= 256)
-                {
-                    return disposeImage;
-                }
-
-                try
-                {
-                    Log.Info("Reducing colors on bitmap to 256.");
-                    tmpImage = quantizer.GetQuantizedImage(CoreConfig.OutputFileReduceColorsTo);
-                    if (disposeImage)
-                    {
-                        imageToSave.Dispose();
-                    }
-
-                    imageToSave = tmpImage;
-                    // Make sure the "new" image is disposed
-                    disposeImage = true;
-                }
-                catch (Exception e)
-                {
-                    Log.Warn("Error occurred while Quantizing the image, ignoring and using original. Error: ", e);
-                }
-            }
-            else if (isAlpha && !outputSettings.ReduceColors)
-            {
-                Log.Info("Skipping 'optional' color reduction as the image has alpha");
-            }
-
             return disposeImage;
         }
 

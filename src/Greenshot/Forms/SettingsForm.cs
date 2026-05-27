@@ -51,7 +51,6 @@ namespace Greenshot.Forms
         private static readonly ILog Log = LogManager.GetLogger(typeof(SettingsForm));
         private readonly ToolTip _toolTip = new ToolTip();
         private bool _inHotkey;
-        private int _daysBetweenCheckPreviousValue;
 
         public SettingsForm()
         {
@@ -89,9 +88,6 @@ namespace Greenshot.Forms
             region_hotkeyControl.Leave += LeaveHotkeyControl;
             lastregion_hotkeyControl.Enter += EnterHotkeyControl;
             lastregion_hotkeyControl.Leave += LeaveHotkeyControl;
-            // Changes for BUG-2077
-            numericUpDown_daysbetweencheck.ValueChanged += NumericUpDownDaysbetweencheckOnValueChanged;
-
             // Expert mode, the clipboard formats
             foreach (ClipboardFormat clipboardFormat in Enum.GetValues(typeof(ClipboardFormat)))
             {
@@ -100,47 +96,11 @@ namespace Greenshot.Forms
                 item.Checked = coreConfiguration.ClipboardFormats.Contains(clipboardFormat);
             }
 
-            _daysBetweenCheckPreviousValue = (int) numericUpDown_daysbetweencheck.Value;
             DisplayPluginTab();
             UpdateUi();
             ExpertSettingsEnableState(false);
             DisplaySettings();
             CheckSettings();
-        }
-
-        /// <summary>
-        /// This makes sure the check cannot be set to 1-6
-        /// </summary>
-        /// <param name="sender">object</param>
-        /// <param name="eventArgs">EventArgs</param>
-        private void NumericUpDownDaysbetweencheckOnValueChanged(object sender, EventArgs eventArgs)
-        {
-            int currentValue = (int) numericUpDown_daysbetweencheck.Value;
-
-            // Check if we can into the forbidden range
-            if (currentValue > 0 && currentValue < 7)
-            {
-                if (_daysBetweenCheckPreviousValue <= currentValue)
-                {
-                    numericUpDown_daysbetweencheck.Value = 7;
-                }
-                else
-                {
-                    numericUpDown_daysbetweencheck.Value = 0;
-                }
-            }
-
-            if ((int) numericUpDown_daysbetweencheck.Value < 0)
-            {
-                numericUpDown_daysbetweencheck.Value = 0;
-            }
-
-            if ((int) numericUpDown_daysbetweencheck.Value > 365)
-            {
-                numericUpDown_daysbetweencheck.Value = 365;
-            }
-
-            _daysBetweenCheckPreviousValue = (int) numericUpDown_daysbetweencheck.Value;
         }
 
         private void EnterHotkeyControl(object sender, EventArgs e)
@@ -500,8 +460,6 @@ namespace Greenshot.Forms
                 }
             }
 
-            numericUpDown_daysbetweencheck.Value = coreConfiguration.UpdateCheckInterval;
-            numericUpDown_daysbetweencheck.Enabled = !coreConfiguration.IsConstant("UpdateCheckInterval");
             numericUpdownIconSize.Value = coreConfiguration.IconSize.Width;
             CheckDestinationSettings();
         }
@@ -548,8 +506,6 @@ namespace Greenshot.Forms
             coreConfiguration.OutputDestinations = destinations;
             coreConfiguration.CaptureDelay = (int) numericUpDownWaitTime.Value;
             coreConfiguration.DWMBackgroundColor = colorButton_window_background.SelectedColor;
-            coreConfiguration.UpdateCheckInterval = (int) numericUpDown_daysbetweencheck.Value;
-
             coreConfiguration.IconSize = new Size((int) numericUpdownIconSize.Value, (int) numericUpdownIconSize.Value);
 
             try
@@ -780,11 +736,6 @@ namespace Greenshot.Forms
 
         protected override void OnFieldsFilled()
         {
-            // the color radio button is not actually bound to a setting, but checked when monochrome/grayscale are not checked
-            if (!radioBtnGrayScale.Checked && !radioBtnMonochrome.Checked)
-            {
-                radioBtnColorPrint.Checked = true;
-            }
         }
 
         /// <summary>
@@ -797,9 +748,7 @@ namespace Greenshot.Forms
             checkbox_autoreducecolors.Enabled = state;
             checkbox_optimizeforrdp.Enabled = state;
             checkbox_thumbnailpreview.Enabled = state;
-            textbox_footerpattern.Enabled = state;
             textbox_counter.Enabled = state;
-            checkbox_checkunstableupdates.Enabled = state;
             checkbox_minimizememoryfootprint.Enabled = state;
         }
 

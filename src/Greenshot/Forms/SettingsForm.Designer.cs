@@ -80,8 +80,6 @@ namespace Greenshot.Forms {
 			this.tabcontrol = new System.Windows.Forms.TabControl();
 			this.tab_general = new GreenshotTabPage();
 			this.groupbox_network = new GreenshotGroupBox();
-			this.numericUpDown_daysbetweencheck = new System.Windows.Forms.NumericUpDown();
-			this.label_checkperiod = new GreenshotLabel();
 			this.checkbox_usedefaultproxy = new GreenshotCheckBox();
 			this.groupbox_hotkeys = new GreenshotGroupBox();
 			this.label_lastregion_hotkey = new GreenshotLabel();
@@ -108,19 +106,6 @@ namespace Greenshot.Forms {
 			this.label_waittime = new GreenshotLabel();
 			this.tab_output = new GreenshotTabPage();
 			this.tab_destinations = new GreenshotTabPage();
-			this.tab_printer = new GreenshotTabPage();
-			this.groupBoxColors = new GreenshotGroupBox();
-			this.checkboxPrintInverted = new GreenshotCheckBox();
-			this.radioBtnColorPrint = new GreenshotRadioButton();
-			this.radioBtnGrayScale = new GreenshotRadioButton();
-			this.radioBtnMonochrome = new GreenshotRadioButton();
-			this.groupBoxPrintLayout = new GreenshotGroupBox();
-			this.checkboxDateTime = new GreenshotCheckBox();
-			this.checkboxAllowShrink = new GreenshotCheckBox();
-			this.checkboxAllowEnlarge = new GreenshotCheckBox();
-			this.checkboxAllowRotate = new GreenshotCheckBox();
-			this.checkboxAllowCenter = new GreenshotCheckBox();
-			this.checkbox_alwaysshowprintoptionsdialog = new GreenshotCheckBox();
 			this.tab_plugins = new GreenshotTabPage();
 			this.groupbox_plugins = new GreenshotGroupBox();
 			this.listview_plugins = new System.Windows.Forms.ListView();
@@ -128,11 +113,8 @@ namespace Greenshot.Forms {
 			this.tab_expert = new GreenshotTabPage();
 			this.groupbox_expert = new GreenshotGroupBox();
 			this.checkbox_minimizememoryfootprint = new GreenshotCheckBox();
-			this.checkbox_checkunstableupdates = new GreenshotCheckBox();
 			this.label_counter = new GreenshotLabel();
 			this.textbox_counter = new GreenshotTextBox();
-			this.label_footerpattern = new GreenshotLabel();
-			this.textbox_footerpattern = new GreenshotTextBox();
 			this.checkbox_thumbnailpreview = new GreenshotCheckBox();
 			this.checkbox_optimizeforrdp = new GreenshotCheckBox();
 			this.checkbox_autoreducecolors = new GreenshotCheckBox();
@@ -148,7 +130,6 @@ namespace Greenshot.Forms {
 			this.tabcontrol.SuspendLayout();
 			this.tab_general.SuspendLayout();
 			this.groupbox_network.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown_daysbetweencheck)).BeginInit();
 			this.groupbox_hotkeys.SuspendLayout();
 			this.tab_capture.SuspendLayout();
 			this.groupbox_windowscapture.SuspendLayout();
@@ -156,9 +137,6 @@ namespace Greenshot.Forms {
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTime)).BeginInit();
 			this.tab_output.SuspendLayout();
 			this.tab_destinations.SuspendLayout();
-			this.tab_printer.SuspendLayout();
-			this.groupBoxColors.SuspendLayout();
-			this.groupBoxPrintLayout.SuspendLayout();
 			this.tab_plugins.SuspendLayout();
 			this.groupbox_plugins.SuspendLayout();
 			this.tab_expert.SuspendLayout();
@@ -436,7 +414,6 @@ namespace Greenshot.Forms {
 			this.tabcontrol.Controls.Add(this.tab_capture);
 			this.tabcontrol.Controls.Add(this.tab_output);
 			this.tabcontrol.Controls.Add(this.tab_destinations);
-			this.tabcontrol.Controls.Add(this.tab_printer);
 			this.tabcontrol.Controls.Add(this.tab_plugins);
 			this.tabcontrol.Controls.Add(this.tab_expert);
 			this.tabcontrol.Location = new System.Drawing.Point(12, 13);
@@ -461,8 +438,6 @@ namespace Greenshot.Forms {
 			// 
 			// groupbox_network
 			// 
-			this.groupbox_network.Controls.Add(this.numericUpDown_daysbetweencheck);
-			this.groupbox_network.Controls.Add(this.label_checkperiod);
 			this.groupbox_network.Controls.Add(this.checkbox_usedefaultproxy);
 			this.groupbox_network.LanguageKey = "settings_network";
 			this.groupbox_network.Location = new System.Drawing.Point(3, 253);
@@ -470,25 +445,7 @@ namespace Greenshot.Forms {
 			this.groupbox_network.Size = new System.Drawing.Size(412, 72);
 			this.groupbox_network.TabIndex = 54;
 			this.groupbox_network.TabStop = false;
-			// 
-			// numericUpDown_daysbetweencheck
-			// 
-			this.numericUpDown_daysbetweencheck.Location = new System.Drawing.Point(359, 37);
-			this.numericUpDown_daysbetweencheck.Name = "numericUpDown_daysbetweencheck";
-			this.numericUpDown_daysbetweencheck.Size = new System.Drawing.Size(44, 20);
-			this.numericUpDown_daysbetweencheck.TabIndex = 8;
-			this.numericUpDown_daysbetweencheck.ThousandsSeparator = true;
-			this.numericUpDown_daysbetweencheck.Minimum = 0;
-			this.numericUpDown_daysbetweencheck.Maximum = 365;
 			//
-			// label_checkperiod
-			//
-			this.label_checkperiod.LanguageKey = "settings_checkperiod";
-			this.label_checkperiod.Location = new System.Drawing.Point(5, 39);
-			this.label_checkperiod.Name = "label_checkperiod";
-			this.label_checkperiod.Size = new System.Drawing.Size(350, 23);
-			this.label_checkperiod.TabIndex = 19;
-			// 
 			// checkbox_usedefaultproxy
 			// 
 			this.checkbox_usedefaultproxy.LanguageKey = "settings_usedefaultproxy";
@@ -758,175 +715,6 @@ namespace Greenshot.Forms {
 			this.tab_destinations.Size = new System.Drawing.Size(423, 351);
 			this.tab_destinations.TabIndex = 4;
 			this.tab_destinations.UseVisualStyleBackColor = true;
-			// 
-			// tab_printer
-			// 
-			this.tab_printer.Controls.Add(this.groupBoxColors);
-			this.tab_printer.Controls.Add(this.groupBoxPrintLayout);
-			this.tab_printer.Controls.Add(this.checkbox_alwaysshowprintoptionsdialog);
-			this.tab_printer.LanguageKey = "settings_printer";
-			this.tab_printer.Location = new System.Drawing.Point(4, 22);
-			this.tab_printer.Name = "tab_printer";
-			this.tab_printer.Padding = new System.Windows.Forms.Padding(3);
-			this.tab_printer.Size = new System.Drawing.Size(423, 351);
-			this.tab_printer.TabIndex = 2;
-			this.tab_printer.UseVisualStyleBackColor = true;
-			// 
-			// groupBoxColors
-			// 
-			this.groupBoxColors.Controls.Add(this.checkboxPrintInverted);
-			this.groupBoxColors.Controls.Add(this.radioBtnColorPrint);
-			this.groupBoxColors.Controls.Add(this.radioBtnGrayScale);
-			this.groupBoxColors.Controls.Add(this.radioBtnMonochrome);
-			this.groupBoxColors.LanguageKey = "printoptions_colors";
-			this.groupBoxColors.Location = new System.Drawing.Point(6, 163);
-			this.groupBoxColors.Name = "groupBoxColors";
-			this.groupBoxColors.Size = new System.Drawing.Size(412, 124);
-			this.groupBoxColors.TabIndex = 10;
-			this.groupBoxColors.TabStop = false;
-			// 
-			// checkboxPrintInverted
-			// 
-			this.checkboxPrintInverted.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxPrintInverted.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxPrintInverted.LanguageKey = "printoptions_inverted";
-			this.checkboxPrintInverted.Location = new System.Drawing.Point(13, 88);
-			this.checkboxPrintInverted.Name = "checkboxPrintInverted";
-			this.checkboxPrintInverted.PropertyName = nameof(ICoreConfiguration.OutputPrintInverted);
-			this.checkboxPrintInverted.Size = new System.Drawing.Size(390, 20);
-			this.checkboxPrintInverted.TabIndex = 14;
-			this.checkboxPrintInverted.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxPrintInverted.UseVisualStyleBackColor = true;
-			// 
-			// radioBtnColorPrint
-			// 
-			this.radioBtnColorPrint.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.radioBtnColorPrint.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.radioBtnColorPrint.LanguageKey = "printoptions_printcolor";
-			this.radioBtnColorPrint.Location = new System.Drawing.Point(13, 19);
-			this.radioBtnColorPrint.Name = "radioBtnColorPrint";
-			this.radioBtnColorPrint.Size = new System.Drawing.Size(390, 20);
-			this.radioBtnColorPrint.TabIndex = 11;
-			this.radioBtnColorPrint.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.radioBtnColorPrint.UseVisualStyleBackColor = true;
-			// 
-			// radioBtnGrayScale
-			// 
-			this.radioBtnGrayScale.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.radioBtnGrayScale.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.radioBtnGrayScale.LanguageKey = "printoptions_printgrayscale";
-			this.radioBtnGrayScale.Location = new System.Drawing.Point(13, 42);
-			this.radioBtnGrayScale.Name = "radioBtnGrayScale";
-			this.radioBtnGrayScale.PropertyName = nameof(coreConfiguration.OutputPrintGrayscale);
-			this.radioBtnGrayScale.Size = new System.Drawing.Size(390, 20);
-			this.radioBtnGrayScale.TabIndex = 12;
-			this.radioBtnGrayScale.Text = "Force grayscale printing";
-			this.radioBtnGrayScale.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.radioBtnGrayScale.UseVisualStyleBackColor = true;
-			// 
-			// radioBtnMonochrome
-			// 
-			this.radioBtnMonochrome.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.radioBtnMonochrome.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.radioBtnMonochrome.LanguageKey = "printoptions_printmonochrome";
-			this.radioBtnMonochrome.Location = new System.Drawing.Point(13, 65);
-			this.radioBtnMonochrome.Name = "radioBtnMonochrome";
-			this.radioBtnMonochrome.PropertyName = nameof(coreConfiguration.OutputPrintMonochrome);
-			this.radioBtnMonochrome.Size = new System.Drawing.Size(390, 20);
-			this.radioBtnMonochrome.TabIndex = 13;
-			this.radioBtnMonochrome.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.radioBtnMonochrome.UseVisualStyleBackColor = true;
-			// 
-			// groupBoxPrintLayout
-			// 
-			this.groupBoxPrintLayout.Controls.Add(this.checkboxDateTime);
-			this.groupBoxPrintLayout.Controls.Add(this.checkboxAllowShrink);
-			this.groupBoxPrintLayout.Controls.Add(this.checkboxAllowEnlarge);
-			this.groupBoxPrintLayout.Controls.Add(this.checkboxAllowRotate);
-			this.groupBoxPrintLayout.Controls.Add(this.checkboxAllowCenter);
-			this.groupBoxPrintLayout.LanguageKey = "printoptions_layout";
-			this.groupBoxPrintLayout.Location = new System.Drawing.Point(6, 6);
-			this.groupBoxPrintLayout.Name = "groupBoxPrintLayout";
-			this.groupBoxPrintLayout.Size = new System.Drawing.Size(412, 151);
-			this.groupBoxPrintLayout.TabIndex = 1;
-			this.groupBoxPrintLayout.TabStop = false;
-			// 
-			// checkboxDateTime
-			// 
-			this.checkboxDateTime.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxDateTime.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxDateTime.LanguageKey = "printoptions_timestamp";
-			this.checkboxDateTime.Location = new System.Drawing.Point(13, 115);
-			this.checkboxDateTime.Name = "checkboxDateTime";
-			this.checkboxDateTime.PropertyName = nameof(coreConfiguration.OutputPrintFooter);
-			this.checkboxDateTime.Size = new System.Drawing.Size(390, 20);
-			this.checkboxDateTime.TabIndex = 6;
-			this.checkboxDateTime.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxDateTime.UseVisualStyleBackColor = true;
-			// 
-			// checkboxAllowShrink
-			// 
-			this.checkboxAllowShrink.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowShrink.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowShrink.LanguageKey = "printoptions_allowshrink";
-			this.checkboxAllowShrink.Location = new System.Drawing.Point(13, 23);
-			this.checkboxAllowShrink.Name = "checkboxAllowShrink";
-			this.checkboxAllowShrink.PropertyName = nameof(coreConfiguration.OutputPrintAllowShrink);
-			this.checkboxAllowShrink.Size = new System.Drawing.Size(390, 20);
-			this.checkboxAllowShrink.TabIndex = 2;
-			this.checkboxAllowShrink.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowShrink.UseVisualStyleBackColor = true;
-			// 
-			// checkboxAllowEnlarge
-			// 
-			this.checkboxAllowEnlarge.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowEnlarge.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowEnlarge.LanguageKey = "printoptions_allowenlarge";
-			this.checkboxAllowEnlarge.Location = new System.Drawing.Point(13, 46);
-			this.checkboxAllowEnlarge.Name = "checkboxAllowEnlarge";
-			this.checkboxAllowEnlarge.PropertyName = nameof(coreConfiguration.OutputPrintAllowEnlarge);
-			this.checkboxAllowEnlarge.Size = new System.Drawing.Size(390, 20);
-			this.checkboxAllowEnlarge.TabIndex = 3;
-			this.checkboxAllowEnlarge.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowEnlarge.UseVisualStyleBackColor = true;
-			// 
-			// checkboxAllowRotate
-			// 
-			this.checkboxAllowRotate.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowRotate.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowRotate.LanguageKey = "printoptions_allowrotate";
-			this.checkboxAllowRotate.Location = new System.Drawing.Point(13, 69);
-			this.checkboxAllowRotate.Name = "checkboxAllowRotate";
-			this.checkboxAllowRotate.PropertyName = nameof(coreConfiguration.OutputPrintAllowRotate);
-			this.checkboxAllowRotate.Size = new System.Drawing.Size(390, 20);
-			this.checkboxAllowRotate.TabIndex = 4;
-			this.checkboxAllowRotate.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowRotate.UseVisualStyleBackColor = true;
-			// 
-			// checkboxAllowCenter
-			// 
-			this.checkboxAllowCenter.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowCenter.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowCenter.LanguageKey = "printoptions_allowcenter";
-			this.checkboxAllowCenter.Location = new System.Drawing.Point(13, 92);
-			this.checkboxAllowCenter.Name = "checkboxAllowCenter";
-			this.checkboxAllowCenter.PropertyName = nameof(coreConfiguration.OutputPrintCenter);
-			this.checkboxAllowCenter.Size = new System.Drawing.Size(390, 20);
-			this.checkboxAllowCenter.TabIndex = 5;
-			this.checkboxAllowCenter.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkboxAllowCenter.UseVisualStyleBackColor = true;
-			// 
-			// checkbox_alwaysshowprintoptionsdialog
-			// 
-			this.checkbox_alwaysshowprintoptionsdialog.LanguageKey = "settings_alwaysshowprintoptionsdialog";
-			this.checkbox_alwaysshowprintoptionsdialog.Location = new System.Drawing.Point(19, 293);
-			this.checkbox_alwaysshowprintoptionsdialog.Name = "checkbox_alwaysshowprintoptionsdialog";
-			this.checkbox_alwaysshowprintoptionsdialog.PropertyName = nameof(coreConfiguration.OutputPrintPromptOptions);
-			this.checkbox_alwaysshowprintoptionsdialog.Size = new System.Drawing.Size(394, 24);
-			this.checkbox_alwaysshowprintoptionsdialog.TabIndex = 15;
-			this.checkbox_alwaysshowprintoptionsdialog.Text = "Show print options dialog every time an image is printed";
-			this.checkbox_alwaysshowprintoptionsdialog.UseVisualStyleBackColor = true;
-			// 
 			// tab_plugins
 			// 
 			this.tab_plugins.Controls.Add(this.groupbox_plugins);
@@ -992,11 +780,8 @@ namespace Greenshot.Forms {
 			// groupbox_expert
 			// 
 			this.groupbox_expert.Controls.Add(this.checkbox_minimizememoryfootprint);
-			this.groupbox_expert.Controls.Add(this.checkbox_checkunstableupdates);
 			this.groupbox_expert.Controls.Add(this.label_counter);
 			this.groupbox_expert.Controls.Add(this.textbox_counter);
-			this.groupbox_expert.Controls.Add(this.label_footerpattern);
-			this.groupbox_expert.Controls.Add(this.textbox_footerpattern);
 			this.groupbox_expert.Controls.Add(this.checkbox_thumbnailpreview);
 			this.groupbox_expert.Controls.Add(this.checkbox_optimizeforrdp);
 			this.groupbox_expert.Controls.Add(this.checkbox_autoreducecolors);
@@ -1020,17 +805,7 @@ namespace Greenshot.Forms {
 			this.checkbox_minimizememoryfootprint.Size = new System.Drawing.Size(394, 20);
 			this.checkbox_minimizememoryfootprint.TabIndex = 8;
 			this.checkbox_minimizememoryfootprint.UseVisualStyleBackColor = true;
-			// 
-			// checkbox_checkunstableupdates
 			//
-			this.checkbox_checkunstableupdates.LanguageKey = "expertsettings_checkunstableupdates";
-			this.checkbox_checkunstableupdates.Location = new System.Drawing.Point(10, 184);
-			this.checkbox_checkunstableupdates.Name = "checkbox_checkunstableupdates";
-			this.checkbox_checkunstableupdates.PropertyName = nameof(coreConfiguration.CheckForUnstable);
-			this.checkbox_checkunstableupdates.Size = new System.Drawing.Size(394, 20);
-			this.checkbox_checkunstableupdates.TabIndex = 7;
-			this.checkbox_checkunstableupdates.UseVisualStyleBackColor = true;
-			// 
 			// label_counter
 			//
 			this.label_counter.LanguageKey = "expertsettings_counter";
@@ -1046,24 +821,7 @@ namespace Greenshot.Forms {
 			this.textbox_counter.PropertyName = nameof(coreConfiguration.OutputFileIncrementingNumber);
 			this.textbox_counter.Size = new System.Drawing.Size(141, 20);
 			this.textbox_counter.TabIndex = 11;
-			// 
-			// label_footerpattern
 			//
-			this.label_footerpattern.LanguageKey = "expertsettings_footerpattern";
-			this.label_footerpattern.Location = new System.Drawing.Point(7, 244);
-			this.label_footerpattern.Name = "label_footerpattern";
-			this.label_footerpattern.Size = new System.Drawing.Size(130, 20);
-			this.label_footerpattern.TabIndex = 25;
-			this.label_footerpattern.Text = "Printer footer pattern";
-			//
-			// textbox_footerpattern
-			//
-			this.textbox_footerpattern.Location = new System.Drawing.Point(138, 241);
-			this.textbox_footerpattern.Name = "textbox_footerpattern";
-			this.textbox_footerpattern.PropertyName = nameof(coreConfiguration.OutputPrintFooterPattern);
-			this.textbox_footerpattern.Size = new System.Drawing.Size(262, 20);
-			this.textbox_footerpattern.TabIndex = 10;
-			// 
 			// checkbox_thumbnailpreview
 			//
 			this.checkbox_thumbnailpreview.LanguageKey = "expertsettings_thumbnailpreview";
@@ -1159,7 +917,6 @@ namespace Greenshot.Forms {
 			this.tabcontrol.ResumeLayout(false);
 			this.tab_general.ResumeLayout(false);
 			this.groupbox_network.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown_daysbetweencheck)).EndInit();
 			this.groupbox_hotkeys.ResumeLayout(false);
 			this.groupbox_hotkeys.PerformLayout();
 			this.tab_capture.ResumeLayout(false);
@@ -1169,12 +926,6 @@ namespace Greenshot.Forms {
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTime)).EndInit();
 			this.tab_output.ResumeLayout(false);
 			this.tab_destinations.ResumeLayout(false);
-			this.tab_printer.ResumeLayout(false);
-			this.tab_printer.PerformLayout();
-			this.groupBoxColors.ResumeLayout(false);
-			this.groupBoxColors.PerformLayout();
-			this.groupBoxPrintLayout.ResumeLayout(false);
-			this.groupBoxPrintLayout.PerformLayout();
 			this.tab_plugins.ResumeLayout(false);
 			this.groupbox_plugins.ResumeLayout(false);
 			this.groupbox_plugins.PerformLayout();
@@ -1189,10 +940,8 @@ namespace Greenshot.Forms {
 		private System.Windows.Forms.ColumnHeader destination;
 		private GreenshotCheckBox checkbox_picker;
 		private System.Windows.Forms.ListView listview_destinations;
-		private System.Windows.Forms.NumericUpDown numericUpDown_daysbetweencheck;
 		private GreenshotGroupBox groupbox_network;
 		private GreenshotCheckBox checkbox_usedefaultproxy;
-		private GreenshotLabel label_checkperiod;
 		private HotkeyControl fullscreen_hotkeyControl;
 		private HotkeyControl window_hotkeyControl;
 		private HotkeyControl region_hotkeyControl;
@@ -1212,7 +961,6 @@ namespace Greenshot.Forms {
 		private GreenshotLabel label_waittime;
 		private GreenshotRadioButton radiobuttonInteractiveCapture;
 		private GreenshotCheckBox checkbox_capture_mousepointer;
-		private GreenshotTabPage tab_printer;
 		private System.Windows.Forms.ListView listview_plugins;
 		private GreenshotButton button_pluginconfigure;
 		private GreenshotGroupBox groupbox_plugins;
@@ -1252,24 +1000,9 @@ namespace Greenshot.Forms {
 		private GreenshotCheckBox checkbox_autoreducecolors;
 		private GreenshotCheckBox checkbox_optimizeforrdp;
 		private GreenshotCheckBox checkbox_thumbnailpreview;
-		private GreenshotLabel label_footerpattern;
-		private GreenshotTextBox textbox_footerpattern;
 		private GreenshotLabel label_counter;
 		private GreenshotTextBox textbox_counter;
 		private GreenshotCheckBox checkbox_reducecolors;
-		private GreenshotCheckBox checkbox_checkunstableupdates;
-        private GreenshotCheckBox checkbox_alwaysshowprintoptionsdialog;
-        private GreenshotGroupBox groupBoxColors;
-        private GreenshotCheckBox checkboxPrintInverted;
-        private GreenshotRadioButton radioBtnColorPrint;
-        private GreenshotRadioButton radioBtnGrayScale;
-        private GreenshotRadioButton radioBtnMonochrome;
-        private GreenshotGroupBox groupBoxPrintLayout;
-        private GreenshotCheckBox checkboxDateTime;
-        private GreenshotCheckBox checkboxAllowShrink;
-        private GreenshotCheckBox checkboxAllowEnlarge;
-        private GreenshotCheckBox checkboxAllowRotate;
-        private GreenshotCheckBox checkboxAllowCenter;
 		private GreenshotCheckBox checkbox_zoomer;
 		private GreenshotLabel label_icon_size;
 		private System.Windows.Forms.NumericUpDown numericUpdownIconSize;
